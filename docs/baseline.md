@@ -11,10 +11,14 @@ Pi builds the baseline through eight OpenSpec changes. Each goes through propose
 | 1 | `add-catalog` | catalog | Books have copies. Search by title or author. |
 | 2 | `add-members` | members | Standard and premium tiers. A member can be suspended. |
 | 3 | `add-loans` | loans | Loan lasts 14 days, or 28 for premium. At most 5 active loans. Suspended members cannot borrow. |
-| 4 | `add-fines` | fines, members | Late fee $0.25 a day, capped at $10.00 per loan. Unpaid fines over $5.00 suspend the member. |
-| 5 | `add-holds` | holds | Members queue for a book with no free copy. A ready hold expires after 3 days. |
+| 4 | `add-fines` | fines, members, loans | Late fee $0.25 a day, capped at $10.00 per loan. Unpaid fines over $5.00 suspend the member. |
+| 5 | `add-holds` | holds, catalog, loans | Members queue for a book with no free copy. A ready hold expires after 3 days. |
 | 6 | `add-renewals` | loans | A loan renews up to 2 times. No renewal when someone holds the book. |
 | 7 | `add-notifications` | notifications | Due-soon, overdue and hold-ready messages go to an in-memory outbox. |
 | 8 | `premium-fine-cap` | fines | Premium members' cap drops to $5.00 per loan. |
 
-Changes 4, 6 and 8 modify specs that already exist, so the archive holds MODIFIED deltas, not only ADDED ones.
+Changes 4, 5 and 8 modify specs that already exist, so the archive holds MODIFIED deltas, not only ADDED ones. Change 6 only adds requirements to the loans spec.
+
+A final cleanup commit, also by pi, split the code into one module per spec domain with no change to behavior, and split two overlong requirements so strict validation passes. Scenario branches start from this layout. `docs/log.md` explains why.
+
+`scripts/build-baseline.sh` rebuilds all eight changes from an empty repo.

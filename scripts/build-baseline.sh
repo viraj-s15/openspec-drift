@@ -1,8 +1,11 @@
 #!/usr/bin/env bash
-# Builds baseline changes 2 to 8 in order. Each one stops the run if its checks, tests or typecheck fail.
+# Builds the eight baseline changes in order. Each one stops the run if its checks, tests or typecheck fail.
+# The published baseline built add-catalog with an earlier one-call version of baseline-change.sh.
 set -euo pipefail
 cd "$(dirname "$0")/.."
+mkdir -p .sessions
 run() { scripts/baseline-change.sh "$1" "$2" > ".sessions/$1.out" 2>&1 && echo "done $1" || { echo "FAILED $1: $(tail -1 ".sessions/$1.out")"; exit 1; }; }
+run add-catalog "Books with ISBN, title and author. Each book has one or more physical copies, each available or on loan. Search books by title or author, case-insensitive substring match."
 run add-members "Members with an id, name and tier: standard or premium. A member can be suspended and reinstated. Register, look up and list members."
 run add-loans "Check out an available copy to a member and return it. A loan lasts 14 days for standard members and 28 days for premium members. A member may have at most 5 active loans. Suspended members cannot borrow. Use an injectable clock so tests control dates."
 run add-fines "A returned or still-open overdue loan accrues a late fee of 0.25 dollars per day, capped at 10.00 dollars per loan. Members can pay fines. When a member's unpaid fines exceed 5.00 dollars they are suspended automatically; paying down to 5.00 or less reinstates them. Store money as integer cents. This modifies the members spec too."
