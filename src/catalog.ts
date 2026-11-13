@@ -33,6 +33,11 @@ export class Catalog {
     return book && this.snapshot(book);
   }
 
+  getCopy(copyId: string): Copy | undefined {
+    const copy = this.copies.get(copyId);
+    return copy && { ...copy };
+  }
+
   search(query: string): Book[] {
     const needle = query.toLowerCase();
     return [...this.books.values()]
