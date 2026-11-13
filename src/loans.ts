@@ -19,11 +19,11 @@ export interface Loan {
 /** Use one shared instance per catalog and route lending through it. Direct catalog
  * status changes do not alter loan ownership, and instances do not coordinate. */
 export class Loans {
-  private readonly active = new Map<string, Loan & { renewals: number }>();
+  private readonly active = new Map<string, Loan & { renewals: number; fineCap: number }>();
   private readonly holds = new Map<string, Hold[]>();
   private readonly holdOrder = new WeakMap<Hold, number>();
   private nextHoldOrder = 0;
-  private readonly returned: Array<Loan & { returnedAt: number }> = [];
+  private readonly returned: Array<Loan & { returnedAt: number; fineCap: number }> = [];
   private lastTime = -Infinity;
   private checkoutTime?: number;
   private readonly payments = new Map<string, number>();
@@ -70,11 +70,11 @@ export class Loans {
   }
 
   private balanceAt(memberId: string, time: number): number {
-    const loans: Array<Loan & { returnedAt: number }> = [
+    const loans: Array<Loan & { returnedAt: number; fineCap: number }> = [
       ...[...this.active.values()].map(loan => ({ ...loan, returnedAt: time })), ...this.returned,
     ];
     const accrued = loans.filter(loan => loan.memberId === memberId).reduce((total, loan) =>
-      total + Math.min(1000, Math.max(0, Math.floor((loan.returnedAt - loan.dueAt.getTime()) / 86400000)) * 25), 0);
+      total + Math.min(loan.fineCap, Math.max(0, Math.floor((loan.returnedAt - loan.dueAt.getTime()) / 86400000)) * 25), 0);
     return Math.max(0, accrued - (this.payments.get(memberId) ?? 0));
   }
 
@@ -175,7 +175,8 @@ export class Loans {
       throw new Error('Copy unavailable');
     }
 
-    const loan = { memberId, copyId, checkoutAt: new Date(timestamp), dueAt: new Date(due), renewals: 0 };
+    const loan = { memberId, copyId, checkoutAt: new Date(timestamp), dueAt: new Date(due), renewals: 0,
+      fineCap: member.tier === 'premium' ? 500 : 1000 };
     this.catalog.setCopyStatus(copyId, 'on loan');
     this.active.set(copyId, loan);
     if (reservation) queue.splice(queue.indexOf(reservation), 1);

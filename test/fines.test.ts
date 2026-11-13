@@ -11,6 +11,7 @@ function setup() {
   const members = new Members();
   members.register('m', 'Member', 'standard');
   members.register('n', 'Other', 'standard');
+  members.register('p', 'Premium', 'premium');
   const loans = new Loans(catalog, members, () => new Date(time));
   return { catalog, members, loans, setTime: (days: number, ms = 0) => { time = Date.UTC(2024, 0, 1) + days * day + ms; } };
 }
@@ -26,6 +27,37 @@ describe('fine accounting', () => {
     setTime(55); expect(loans.getBalance('m')).toBe(1000);
     setTime(100); expect(loans.getBalance('m')).toBe(1000);
     expect(() => loans.getBalance('missing')).toThrow();
+  });
+
+  it('caps premium fines at 500 cents without exposing the cap on loan snapshots', () => {
+    const { loans, setTime } = setup();
+    const loan = loans.checkout('p', 'a');
+    expect(Object.keys(loan).sort()).toEqual(['checkoutAt', 'copyId', 'dueAt', 'memberId']);
+    setTime(47); expect(loans.getBalance('p')).toBe(475);
+    setTime(48); expect(loans.getBalance('p')).toBe(500);
+    setTime(49); expect(loans.getBalance('p')).toBe(500);
+  });
+
+  it('freezes a returned premium loan at its cap', () => {
+    const { loans, setTime } = setup();
+    loans.checkout('p', 'a');
+    setTime(49); loans.returnCopy('a');
+    setTime(100); expect(loans.getBalance('p')).toBe(500);
+  });
+
+  it('caps premium loans independently and suspends only above 500 cents', () => {
+    const { loans, members, setTime } = setup();
+    loans.checkout('p', 'a');
+    setTime(10); loans.checkout('p', 'b');
+    setTime(48); expect(loans.getBalance('p')).toBe(750);
+    expect(members.get('p')?.suspended).toBe(true);
+    setTime(58); expect(loans.getBalance('p')).toBe(1000);
+    loans.payFine('p', 500);
+    expect(loans.getBalance('p')).toBe(500);
+    expect(members.get('p')?.suspended).toBe(false);
+    setTime(100); expect(loans.getBalance('p')).toBe(500);
+    loans.payFine('p', 500);
+    expect(loans.getBalance('p')).toBe(0);
   });
 
   it('freezes returned fines and keeps separate loans of a reused copy', () => {
