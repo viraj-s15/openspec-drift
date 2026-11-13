@@ -15,5 +15,5 @@ Do this OpenSpec change end to end without asking me anything. Make reasonable c
 
 Do not run git commands."
 npm test --silent && npm run typecheck --silent
-git add -A && git commit -q -m "Add $name through OpenSpec" -m "Pi proposed, applied and archived the $name change: $what"
+git add -A && git commit -q -m "Apply the $name OpenSpec change" -m "Pi proposed, applied and archived the $name change: $what"
 echo "committed $name"
