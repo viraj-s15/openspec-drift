@@ -20,6 +20,17 @@ Use a single shared `Loans` instance for each `Members` registry and catalog; a 
 
 Renewal uses the injectable, monotonic-clamped clock and processes hold expiry first; even a rejected renewal can expire or reassign holds. Other than this processing, a rejection leaves the loan and copy unchanged and does not consume a renewal.
 
+## Notifications
+
+`loans.scanNotifications(date)` scans active loans using the date's UTC calendar day, ignoring time of day. It appends `due-soon` notices exactly two days before the due day and `overdue` notices exactly one day after it; invalid dates throw. Scans do not backfill missed days, process holds, or change lending state. The caller must schedule scans, typically daily. Each notice is emitted at most once per loan, notice type, and due timestamp; renewal can create a new eligible timestamp.
+
+`loans.getOutbox()` returns detached notifications in emission order. Loan notices contain `type`, `memberId`, `copyId`, and a `dueAt` Date. A `hold-ready` notice contains `memberId`, `isbn`, `copyId`, and an `expiresAt` Date. It is emitted whenever a waiting hold is allocated on return or expiration reassignment, including when the operation that processes expiration subsequently fails. Waiting holds and releases without reassignment emit no notice. The outbox and deduplication history live only for the lifetime of the `Loans` instance; delivery and persistence are the caller's responsibility.
+
+```ts
+loans.scanNotifications(new Date('2024-01-13T00:00:00Z'));
+const notices = loans.getOutbox();
+```
+
 ## Holds
 
 `loans.placeHold(memberId, isbn)` queues a member when no copy is available. A member may have one active hold per book, even if currently ineligible to borrow. `loans.getHolds(isbn)` returns detached records in queue order: waiting records have `status: 'waiting'`; ready records have `status: 'ready'`, `copyId`, and an `expiresAt` Date.

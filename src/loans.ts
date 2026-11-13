@@ -5,6 +5,10 @@ export type Hold =
   | { memberId: string; isbn: string; status: 'waiting' }
   | { memberId: string; isbn: string; status: 'ready'; copyId: string; expiresAt: Date };
 
+export type Notification =
+  | { type: 'due-soon' | 'overdue'; memberId: string; copyId: string; dueAt: Date }
+  | { type: 'hold-ready'; memberId: string; isbn: string; copyId: string; expiresAt: Date };
+
 export interface Loan {
   memberId: string;
   copyId: string;
@@ -23,6 +27,31 @@ export class Loans {
   private lastTime = -Infinity;
   private checkoutTime?: number;
   private readonly payments = new Map<string, number>();
+  private readonly outbox: Notification[] = [];
+  private readonly noticeHistory = new WeakMap<Loan, Set<string>>();
+
+  getOutbox(): Notification[] {
+    return this.outbox.map(notice => notice.type === 'hold-ready'
+      ? { ...notice, expiresAt: new Date(notice.expiresAt) }
+      : { ...notice, dueAt: new Date(notice.dueAt) });
+  }
+
+  scanNotifications(date: Date): void {
+    const time = date instanceof Date ? date.getTime() : NaN;
+    if (!Number.isFinite(time)) throw new Error('Invalid scan date');
+    const day = Math.floor(time / 86400000);
+    for (const loan of this.active.values()) {
+      const difference = day - Math.floor(loan.dueAt.getTime() / 86400000);
+      const type = difference === -2 ? 'due-soon' : difference === 1 ? 'overdue' : undefined;
+      if (!type) continue;
+      const key = `${type}:${loan.dueAt.getTime()}`;
+      let history = this.noticeHistory.get(loan);
+      if (history?.has(key)) continue;
+      if (!history) this.noticeHistory.set(loan, history = new Set());
+      history.add(key);
+      this.outbox.push({ type, memberId: loan.memberId, copyId: loan.copyId, dueAt: new Date(loan.dueAt) });
+    }
+  }
 
   private readTime(): number {
     const now = this.clock();
@@ -103,6 +132,7 @@ export class Loans {
     this.holdOrder.set(ready, this.holdOrder.get(waiting)!);
     queue[index] = ready;
     this.catalog.setCopyStatus(copyId, 'reserved');
+    this.outbox.push({ type: 'hold-ready', memberId: ready.memberId, isbn, copyId, expiresAt: new Date(expiresAt) });
   }
 
   private reconcile(time: number): void {
