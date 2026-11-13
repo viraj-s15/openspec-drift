@@ -1,4 +1,4 @@
-export type CopyStatus = 'available' | 'on loan';
+export type CopyStatus = 'available' | 'on loan' | 'reserved';
 
 export interface Copy {
   id: string;
@@ -15,6 +15,7 @@ export interface Book {
 export class Catalog {
   private readonly books = new Map<string, Book>();
   private readonly copies = new Map<string, Copy>();
+  private readonly copyBooks = new Map<string, string>();
 
   addBook(isbn: string, title: string, author: string, copyIds: string[]): void {
     if (this.books.has(isbn)) throw new Error('ISBN already exists');
@@ -25,7 +26,10 @@ export class Catalog {
 
     const copies: Copy[] = copyIds.map(id => ({ id, status: 'available' }));
     this.books.set(isbn, { isbn, title, author, copies });
-    for (const copy of copies) this.copies.set(copy.id, copy);
+    for (const copy of copies) {
+      this.copies.set(copy.id, copy);
+      this.copyBooks.set(copy.id, isbn);
+    }
   }
 
   getBook(isbn: string): Book | undefined {
@@ -36,6 +40,10 @@ export class Catalog {
   getCopy(copyId: string): Copy | undefined {
     const copy = this.copies.get(copyId);
     return copy && { ...copy };
+  }
+
+  getCopyIsbn(copyId: string): string | undefined {
+    return this.copyBooks.get(copyId);
   }
 
   search(query: string): Book[] {

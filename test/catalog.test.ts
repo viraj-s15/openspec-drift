@@ -91,6 +91,18 @@ describe('catalog books and copies', () => {
     expect(catalog.getCopy('a')).toEqual({ id: 'a', status: 'available' });
   });
 
+  it('tracks reserved status and copy ISBN without exposing catalog state', () => {
+    const catalog = new Catalog();
+    catalog.addBook('1', 'Title', 'Author', ['a', 'b']);
+    catalog.setCopyStatus('a', 'reserved');
+    expect(catalog.getCopyIsbn('a')).toBe('1');
+    expect(catalog.getCopyIsbn('missing')).toBeUndefined();
+    const book = catalog.getBook('1')!;
+    expect(book.copies).toEqual([{ id: 'a', status: 'reserved' }, { id: 'b', status: 'available' }]);
+    book.copies[0].status = 'available';
+    expect(catalog.getCopy('a')?.status).toBe('reserved');
+  });
+
   it('rejects updates for unknown copies', () => {
     expect(() => new Catalog().setCopyStatus('missing', 'on loan')).toThrow();
   });
