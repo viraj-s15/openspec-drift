@@ -22,7 +22,7 @@ The registry SHALL register members by unique string ID with a name, a tier of `
 - **THEN** registration fails and no member is added
 
 ### Requirement: Retrieve members
-The registry SHALL support lookup by exact ID and listing all registered members, regardless of status. Returned members SHALL be detached snapshots that cannot modify stored records.
+The registry SHALL support lookup by exact ID and listing all registered members, regardless of status. Returned members SHALL be detached snapshots that cannot modify stored records. Their suspension status SHALL reflect current unpaid fines as well as manual suspension at the time of retrieval.
 
 #### Scenario: Look up a member
 - **WHEN** an existing ID is looked up
@@ -44,17 +44,37 @@ The registry SHALL support lookup by exact ID and listing all registered members
 - **WHEN** a caller changes a member returned by lookup or listing
 - **THEN** the stored member remains unchanged
 
+#### Scenario: Time-dependent status on lookup
+- **WHEN** an open loan accrues enough fines to raise a member's unpaid balance above 500 cents without another operation
+- **THEN** the next lookup or listing reports that member as suspended
+
 ### Requirement: Manage suspension status
-The registry SHALL allow an existing member to be suspended and reinstated, without altering their ID, name, or tier. Repeating an operation for the current status SHALL succeed without changing the record. Status changes for unknown IDs SHALL fail without changing the registry.
+The registry SHALL allow an existing member to be manually suspended and reinstated, without altering their ID, name, or tier. A member SHALL be suspended when manually suspended or when their current unpaid fine balance exceeds 500 cents. A payment reducing that balance to 500 cents or less SHALL remove the fine-related suspension but SHALL NOT remove an independent manual suspension. Repeating a manual operation for the current manual status SHALL succeed without changing the record. Status changes for unknown IDs SHALL fail without changing the registry.
 
 #### Scenario: Suspend and reinstate
-- **WHEN** an active member is suspended and then reinstated
+- **WHEN** an active member without a fine-related suspension is suspended and then reinstated
 - **THEN** the member is suspended after the first operation and active after the second, with other fields unchanged
 
 #### Scenario: Repeat status operation
-- **WHEN** an already suspended member is suspended or an active member is reinstated
-- **THEN** the operation succeeds and the member remains unchanged
+- **WHEN** an already manually suspended member is suspended or a member without a manual suspension is reinstated
+- **THEN** the operation succeeds and their manual status remains unchanged
 
 #### Scenario: Unknown member status update
 - **WHEN** suspension or reinstatement is requested for an unknown ID
 - **THEN** the operation fails and the registry remains unchanged
+
+#### Scenario: Fine threshold
+- **WHEN** an active member's current unpaid balance rises from 500 cents to 525 cents
+- **THEN** the member is suspended automatically
+
+#### Scenario: Payment reinstates fine-suspended member
+- **WHEN** a member suspended only for fines pays their balance down to 500 cents
+- **THEN** the member is active again
+
+#### Scenario: Manual suspension remains independent
+- **WHEN** a manually suspended member pays their fines down to 500 cents or less
+- **THEN** the member remains suspended until manually reinstated
+
+#### Scenario: Manual reinstatement cannot override fines
+- **WHEN** a member with unpaid fines exceeding 500 cents is manually reinstated
+- **THEN** the member remains suspended for fines

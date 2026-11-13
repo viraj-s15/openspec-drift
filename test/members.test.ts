@@ -66,6 +66,25 @@ describe('member retrieval', () => {
   });
 });
 
+describe('fine suspension snapshots', () => {
+  it('combines the exact threshold with independent manual holds in lookup and list', () => {
+    const members = new Members();
+    members.register('1', 'Ada', 'standard');
+    let balance = 500;
+    members.registerFineProvider(() => balance);
+    expect(members.get('1')?.suspended).toBe(false);
+    balance = 501;
+    expect(members.get('1')?.suspended).toBe(true);
+    expect(members.list()[0].suspended).toBe(true);
+    members.reinstate('1'); expect(members.get('1')?.suspended).toBe(true);
+    members.suspend('1'); balance = 500;
+    expect(members.list()[0].suspended).toBe(true);
+    members.reinstate('1'); expect(members.get('1')?.suspended).toBe(false);
+    const snapshot = members.list()[0]; snapshot.suspended = true;
+    expect(members.get('1')?.suspended).toBe(false);
+  });
+});
+
 describe('member suspension', () => {
   it('suspends and reinstates without changing other fields', () => {
     const members = new Members();

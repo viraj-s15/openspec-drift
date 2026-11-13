@@ -33,6 +33,18 @@ describe('loans', () => {
     expect(loan.dueAt.getTime() - loan.checkoutAt.getTime()).toBe(days * 86400000);
   });
 
+  it('rejects invalid return clocks and clamps earlier readings for later loans', () => {
+    let now = new Date('2024-01-02T00:00:00Z');
+    const { loans, catalog } = setup(() => now);
+    loans.checkout('standard', 'a');
+    now = new Date(NaN);
+    expect(() => loans.returnCopy('a')).toThrow();
+    expect(catalog.getCopy('a')?.status).toBe('on loan');
+    now = new Date('2024-01-01T00:00:00Z');
+    loans.returnCopy('a');
+    expect(loans.checkout('standard', 'a').checkoutAt.toISOString()).toBe('2024-01-02T00:00:00.000Z');
+  });
+
   it('rejects invalid clock values without changing state', () => {
     let instant = new Date(NaN);
     const { catalog, loans } = setup(() => instant);
@@ -67,7 +79,7 @@ describe('loans', () => {
       vi.setSystemTime(new Date('2024-01-01T00:00:00Z'));
       const { catalog, loans } = setup();
       for (const copy of ['a', 'b', 'c', 'd', 'e']) loans.checkout(memberId, copy);
-      vi.setSystemTime(new Date('2024-03-01T00:00:00Z'));
+      vi.setSystemTime(new Date(memberId === 'standard' ? '2024-01-16T00:00:00Z' : '2024-01-30T00:00:00Z'));
       expect(() => loans.checkout(memberId, 'f')).toThrow();
       expect(catalog.getCopy('f')?.status).toBe('available');
       loans.returnCopy('a');
