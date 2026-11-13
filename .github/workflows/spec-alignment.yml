@@ -14,7 +14,7 @@ jobs:
       - if: env.HAS_KEY != 'true'
         run: echo "::notice::OPENAI_API_KEY is not set, so this check was skipped. Run scripts/spec-alignment/run-local.sh <branch> to use pi instead."
       - if: env.HAS_KEY == 'true'
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           # spec-alignment diffs origin/HEAD...HEAD, which a shallow checkout cannot resolve.
           fetch-depth: 0
