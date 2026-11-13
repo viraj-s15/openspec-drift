@@ -33,3 +33,4 @@ git push -u origin bypass && gh pr create --base main --head bypass --fill   # r
 spec-alignment runs in CI only when the repo has an `OPENAI_API_KEY` secret. Without one, `scripts/spec-alignment/run-local.sh <branch>` runs the same pipeline with pi as the model.
 
 `scripts/check-branch.sh` and the local spec-alignment run compare against `origin/main`, so push `main` first.
+
