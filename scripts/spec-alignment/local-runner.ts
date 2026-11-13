@@ -1,7 +1,7 @@
 // Runs spec-alignment's own pipeline (diff, discovery, prompt, verdict mapping) with pi as the model.
 // This file is copied into a pinned spec-alignment checkout at run time, so its imports resolve there.
 import { execFileSync } from 'node:child_process';
-import { mkdtempSync, writeFileSync } from 'node:fs';
+import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { glob } from 'fast-glob';
@@ -12,7 +12,15 @@ import { gitAdapter } from './adapters/git.js';
 import { createFilesystemAdapter } from './adapters/fs.js';
 import type { Adapters, Config, EvaluationResult, LlmJudgeAdapter } from './core/types.js';
 
-const PI_MODEL = process.env.PI_MODEL ?? 'openai/gpt-6.1-terra:high';
+// run-local.sh sets both from scripts/lib/pi.sh, so the defaults live in one place.
+const PI_BIN = requiredEnv('PI_BIN');
+const PI_MODEL = requiredEnv('PI_MODEL');
+
+function requiredEnv(name: string): string {
+  const value = process.env[name];
+  if (!value) throw new Error(`${name} is not set. Run this through scripts/spec-alignment/run-local.sh.`);
+  return value;
+}
 
 // Mirrors VerdictSchema and FilterSelectionSchema in adapters/llm.ts, which are not exported.
 const VerdictSchema = z.object({
@@ -39,16 +47,20 @@ const FILTER_FORMAT = `Reply with one JSON object and nothing else: {"selectedSo
 
 function askPi(prompt: string): unknown {
   const dir = mkdtempSync(join(tmpdir(), 'spec-alignment-pi-'));
-  const promptFile = join(dir, 'prompt.md');
-  writeFileSync(promptFile, prompt);
-  const reply = execFileSync(
-    'pi-bolt',
-    ['-p', '--model', PI_MODEL, '--no-tools', '--no-context-files', '--no-mcp', '--no-skills', '--no-session',
-      `@${promptFile}`, 'Follow the instructions in the attached file.'],
-    { encoding: 'utf8', stdio: ['ignore', 'pipe', 'inherit'], maxBuffer: 16 * 1024 * 1024 }
-  );
-  const json = reply.slice(reply.indexOf('{'), reply.lastIndexOf('}') + 1);
-  return JSON.parse(json);
+  try {
+    const promptFile = join(dir, 'prompt.md');
+    writeFileSync(promptFile, prompt);
+    const reply = execFileSync(
+      PI_BIN,
+      ['-p', '--model', PI_MODEL, '--no-tools', '--no-context-files', '--no-mcp', '--no-skills', '--no-session',
+        `@${promptFile}`, 'Follow the instructions in the attached file.'],
+      { encoding: 'utf8', stdio: ['ignore', 'pipe', 'inherit'], maxBuffer: 16 * 1024 * 1024 }
+    );
+    const json = reply.slice(reply.indexOf('{'), reply.lastIndexOf('}') + 1);
+    return JSON.parse(json);
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
 }
 
 const piJudge: LlmJudgeAdapter = {

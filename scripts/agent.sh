@@ -5,10 +5,12 @@
 # Usage: scripts/agent.sh <session-name> "<prompt>"
 set -euo pipefail
 name="$1"; shift
-sessions="$(cd "$(dirname "$0")/.." && pwd)/.sessions"
+root="$(cd "$(dirname "$0")/.." && pwd)"
+source "$root/scripts/lib/pi.sh"
+sessions="$root/.sessions"
 mkdir -p "$sessions"
-exec pi-bolt -p \
-  --model openai/gpt-6.1-terra:high \
+exec "$PI_BIN" -p \
+  --model "$PI_MODEL" \
   --no-context-files --no-mcp \
   --session-dir "$sessions" --name "$name" \
   "$@" < /dev/null
