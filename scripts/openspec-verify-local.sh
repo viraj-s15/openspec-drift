@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+# Runs OpenSpec's verify skill through pi on every active change in a branch.
+# Verify needs a model, so it runs locally, not in CI.
+# Usage: scripts/openspec-verify-local.sh <branch> <output-file>
+set -euo pipefail
+branch="$1"; out="$2"
+root="$(cd "$(dirname "$0")/.." && pwd)"
+work="$root/.tools/worktrees/verify-$branch"
+rm -rf "$work"; git -C "$root" worktree prune; mkdir -p "$(dirname "$work")"
+git -C "$root" -c advice.detachedHead=false worktree add -q --detach "$work" "$branch"
+ln -s "$root/node_modules" "$work/node_modules"
+
+changes=$(find "$work/openspec/changes" -mindepth 1 -maxdepth 1 -type d ! -name archive -exec basename {} \; | sort)
+{
+  echo "# OpenSpec verify on $branch"
+  echo
+  if [ -z "$changes" ]; then
+    echo "No active change, so verify has nothing to check."
+  fi
+  for change in $changes; do
+    echo "## $change"
+    echo
+    (cd "$work" && "$root/scripts/agent.sh" "verify-$branch-$change" \
+      "Use the openspec-verify-change skill to verify the change '$change'. Do not change any files. Do not run git commands. Do not ask me anything.")
+    echo
+  done
+} > "$out"
+git -C "$root" worktree remove --force "$work"

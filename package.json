@@ -10,6 +10,8 @@
     "@fission-ai/openspec": "^2.0.0",
     "@types/node": "^26.6.6",
     "esbuild": "^0.25.12",
+    "openlore": "^3.6.0",
+    "specgov": "github:paladini/specgov#v1.0.0-rc.2",
     "typescript": "^5.9.3",
     "vitest": "^3.2.7"
   }

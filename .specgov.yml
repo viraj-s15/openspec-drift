@@ -1,0 +1,54 @@
+schema: specgov/v1
+mode: advisory
+frameworks:
+  - openspec
+# Autodetection found no domains, so each spec domain is mapped by hand to its one source module.
+domains:
+  - id: catalog
+    code:
+      - "src/catalog.ts"
+    artifacts:
+      - "openspec/specs/catalog/**"
+      - "openspec/changes/**/specs/catalog/**"
+  - id: members
+    code:
+      - "src/members.ts"
+    artifacts:
+      - "openspec/specs/members/**"
+      - "openspec/changes/**/specs/members/**"
+  - id: loans
+    code:
+      - "src/loans.ts"
+    artifacts:
+      - "openspec/specs/loans/**"
+      - "openspec/changes/**/specs/loans/**"
+  - id: fines
+    code:
+      - "src/fines.ts"
+    artifacts:
+      - "openspec/specs/fines/**"
+      - "openspec/changes/**/specs/fines/**"
+  - id: holds
+    code:
+      - "src/holds.ts"
+    artifacts:
+      - "openspec/specs/holds/**"
+      - "openspec/changes/**/specs/holds/**"
+  - id: notifications
+    code:
+      - "src/notifications.ts"
+    artifacts:
+      - "openspec/specs/notifications/**"
+      - "openspec/changes/**/specs/notifications/**"
+policies:
+  require_complete_chain: true
+  require_change_artifact_for_code: true
+  require_verification_evidence: false
+  stale_after_days: 90
+ignore:
+  - node_modules/**
+  - dist/**
+  - .git/**
+  - .tools/**
+semantic:
+  enabled: false

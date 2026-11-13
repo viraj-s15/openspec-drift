@@ -1,0 +1,19 @@
+name: specgov
+on: pull_request
+
+jobs:
+  specgov:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      # v1 is only published as a git tag; npm still has the unsupported v0.1.0.
+      - uses: paladini/specgov@v1.0.0-rc.2
+        with:
+          mode: advisory
+          base-ref: ${{ github.event.pull_request.base.sha }}
+          head-ref: ${{ github.event.pull_request.head.sha }}
+          output-format: markdown

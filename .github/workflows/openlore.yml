@@ -1,0 +1,20 @@
+name: openlore
+on: pull_request
+
+jobs:
+  openlore:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      # .openlore/ is gitignored by design, so CI builds the index from scratch.
+      - run: npx openlore init && npx openlore analyze
+      - run: npx openlore drift --base origin/${{ github.base_ref }} --fail-on error --no-color
