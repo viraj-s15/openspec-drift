@@ -7,15 +7,15 @@ branch="$1"
 root="$(cd "$(dirname "$0")/.." && pwd)"
 out="$root/docs/results/$branch"
 work="$root/.tools/worktrees/check-$branch"
-mkdir -p "$out" "$(dirname "$work")"
-base=$(git -C "$root" merge-base main "$branch")
+source "$root/scripts/lib/worktree.sh"
+rm -rf "$out"; mkdir -p "$out"
+# Every tool compares against origin/main, the base a PR has, so they all judge the same diff.
+git -C "$root" fetch -q origin
+base=$(git -C "$root" merge-base origin/main "$branch")
 
 record() { echo "$1: exit $2" | tee -a "$out/exit-codes.txt"; }
-: > "$out/exit-codes.txt"
 
-rm -rf "$work"; git -C "$root" worktree prune
-git -C "$root" -c advice.detachedHead=false worktree add -q --detach "$work" "$branch"
-ln -s "$root/node_modules" "$work/node_modules"
+make_worktree "$work" "$branch"
 
 (cd "$work" && npx openspec validate --all --strict --no-color) > "$out/openspec-validate.txt" 2>&1
 record openspec-validate $?
@@ -25,8 +25,6 @@ record specgov $?
 
 (cd "$work" && npx openlore init > /dev/null && npx openlore analyze > /dev/null && npx openlore drift --base "$base" --json) > "$out/openlore.json" 2>&1
 record openlore $?
-
-git -C "$root" worktree remove --force "$work"
 
 "$root/scripts/openspec-verify-local.sh" "$branch" "$out/openspec-verify.md" 2>> "$out/errors.txt"
 record openspec-verify $?

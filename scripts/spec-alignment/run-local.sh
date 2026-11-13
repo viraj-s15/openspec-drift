@@ -22,11 +22,9 @@ cp "$root/scripts/spec-alignment/local-runner.ts" "$tool/src/local-runner.ts"
 # spec-alignment diffs origin/HEAD...HEAD, the same range a PR against main has.
 git -C "$root" fetch -q origin
 git -C "$root" remote set-head origin main >/dev/null
-rm -rf "$work"; git -C "$root" worktree prune
-mkdir -p "$(dirname "$work")"
-git -C "$root" -c advice.detachedHead=false worktree add -q --detach "$work" "$branch"
+source "$root/scripts/lib/worktree.sh"
+make_worktree "$work" "$branch"
 
 mkdir -p "$(dirname "$out")"
 (cd "$work" && RESULT_FILE="$out" node "$tool/local-runner.cjs") > /dev/null
-git -C "$root" worktree remove --force "$work"
 echo "$branch: $(grep -m1 '"verdict"' "$out")  -> ${out#$root/}"

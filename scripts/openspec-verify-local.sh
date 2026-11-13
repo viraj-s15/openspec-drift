@@ -6,9 +6,8 @@ set -euo pipefail
 branch="$1"; out="$2"
 root="$(cd "$(dirname "$0")/.." && pwd)"
 work="$root/.tools/worktrees/verify-$branch"
-rm -rf "$work"; git -C "$root" worktree prune; mkdir -p "$(dirname "$work")"
-git -C "$root" -c advice.detachedHead=false worktree add -q --detach "$work" "$branch"
-ln -s "$root/node_modules" "$work/node_modules"
+source "$root/scripts/lib/worktree.sh"
+make_worktree "$work" "$branch"
 
 changes=$(find "$work/openspec/changes" -mindepth 1 -maxdepth 1 -type d ! -name archive -exec basename {} \; | sort)
 {
@@ -25,4 +24,3 @@ changes=$(find "$work/openspec/changes" -mindepth 1 -maxdepth 1 -type d ! -name 
     echo
   done
 } > "$out"
-git -C "$root" worktree remove --force "$work"
