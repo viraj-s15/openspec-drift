@@ -9,7 +9,7 @@
   "devDependencies": {
     "@fission-ai/openspec": "^2.0.0",
     "@types/node": "^26.6.6",
-    "tsx": "^4.23.15",
+    "esbuild": "^0.25.12",
     "typescript": "^5.9.3",
     "vitest": "^3.2.7"
   }

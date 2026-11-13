@@ -15,14 +15,17 @@ if [ ! -d "$tool" ]; then
   (cd "$tool" && npm ci --silent --ignore-scripts)
 fi
 cp "$root/scripts/spec-alignment/local-runner.ts" "$tool/src/local-runner.ts"
+# Bundled like the published action, because the source imports CommonJS packages by name.
+"$root/node_modules/.bin/esbuild" "$tool/src/local-runner.ts" --bundle --platform=node --format=cjs \
+  --log-level=warning --outfile="$tool/local-runner.cjs"
 
 # spec-alignment diffs origin/HEAD...HEAD, the same range a PR against main has.
 git -C "$root" fetch -q origin
 git -C "$root" remote set-head origin main >/dev/null
 rm -rf "$work"; git -C "$root" worktree prune
-git -C "$root" worktree add -q --detach "$work" "$branch"
+git -C "$root" -c advice.detachedHead=false worktree add -q --detach "$work" "$branch"
 
 mkdir -p "$(dirname "$out")"
-(cd "$work" && "$root/node_modules/.bin/tsx" "$tool/src/local-runner.ts") > "$out"
+(cd "$work" && RESULT_FILE="$out" node "$tool/local-runner.cjs") > /dev/null
 git -C "$root" worktree remove --force "$work"
 echo "$branch: $(grep -m1 '"verdict"' "$out")  -> ${out#$root/}"

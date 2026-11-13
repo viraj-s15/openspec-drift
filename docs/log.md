@@ -21,3 +21,11 @@ A second pi run split the code into one module per domain and fixed the two spec
 The split worked on the first try. `src/` now has one module per spec domain (475 lines), with named constants such as `FINE_PER_DAY_CENTS = 25`. The same 77 tests pass, strict validation passes for all six specs, and no test file changed. One leftover: `MILLISECONDS_PER_DAY` is defined in three files.
 
 Tagged `baseline` at this commit. Every scenario branch starts here.
+
+## 2026-11-13: spec-alignment setup
+
+- spec-alignment calls an LLM from inside GitHub Actions, so CI needs a provider key as a repo secret. Without the secret, the workflow skips with a notice.
+- For anyone without a key, `scripts/spec-alignment/run-local.sh <branch>` runs spec-alignment v0.1.1's own pipeline and swaps only the model call for pi. Their code routes all model calls through one `LlmJudgeAdapter` interface, so the swap took about 100 lines. The prompt, file discovery and verdict mapping are theirs, unchanged. Pi gets one extra line that spells out the JSON shape, which the hosted path gets from structured output.
+- Their source does not run directly under Node ESM, because `fast-glob` is imported by name. The runner bundles it with esbuild, as their own build does.
+- Their README example uses a shallow checkout, but the action diffs `origin/HEAD...HEAD`. Our workflow uses `fetch-depth: 0` to be safe. Not yet confirmed whether the shallow version breaks.
+- Smoke test on a throwaway branch that raised the late fee from 25 to 50 cents with no spec change: verdict `fail`, one finding at `src/fines.ts:5` with the right reason, in about 9 seconds.

@@ -69,6 +69,7 @@ const piJudge: LlmJudgeAdapter = {
   },
 };
 
+async function main(): Promise<void> {
 let published: EvaluationResult | undefined;
 const filesystem = createFilesystemAdapter(process.cwd());
 const adapters: Adapters = {
@@ -102,4 +103,9 @@ const config: Config = {
 };
 
 const result = await runAction(adapters, config);
-process.stdout.write(JSON.stringify({ model: PI_MODEL, ...(published ?? result) }, null, 2) + '\n');
+// stdout carries the git helper's echo of the diff, so the result goes to its own file.
+writeFileSync(process.env.RESULT_FILE ?? 'spec-alignment-result.json', JSON.stringify({ model: PI_MODEL, ...(published ?? result) }, null, 2) + '\n');
+}
+
+// A CommonJS bundle has no top-level await.
+main().catch((error) => { console.error(error); process.exit(1); });
