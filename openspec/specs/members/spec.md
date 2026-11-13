@@ -49,7 +49,7 @@ The registry SHALL support lookup by exact ID and listing all registered members
 - **THEN** the next lookup or listing reports that member as suspended
 
 ### Requirement: Manage suspension status
-The registry SHALL allow an existing member to be manually suspended and reinstated, without altering their ID, name, or tier. A member SHALL be suspended when manually suspended or when their current unpaid fine balance exceeds 500 cents. A payment reducing that balance to 500 cents or less SHALL remove the fine-related suspension but SHALL NOT remove an independent manual suspension. Repeating a manual operation for the current manual status SHALL succeed without changing the record. Status changes for unknown IDs SHALL fail without changing the registry.
+The registry SHALL allow an existing member to be manually suspended and reinstated, without altering their ID, name, or tier. Repeating a manual operation for the current manual status SHALL succeed without changing the record. Status changes for unknown IDs SHALL fail without changing the registry.
 
 #### Scenario: Suspend and reinstate
 - **WHEN** an active member without a fine-related suspension is suspended and then reinstated
@@ -62,6 +62,9 @@ The registry SHALL allow an existing member to be manually suspended and reinsta
 #### Scenario: Unknown member status update
 - **WHEN** suspension or reinstatement is requested for an unknown ID
 - **THEN** the operation fails and the registry remains unchanged
+
+### Requirement: Apply fine-related suspension
+A member SHALL be suspended when manually suspended or when their current unpaid fine balance exceeds 500 cents. A payment reducing that balance to 500 cents or less SHALL remove the fine-related suspension but SHALL NOT remove an independent manual suspension.
 
 #### Scenario: Fine threshold
 - **WHEN** an active member's current unpaid balance rises from 500 cents to 525 cents

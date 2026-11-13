@@ -7,7 +7,7 @@ Enable lending physical library copies to eligible members and returning them fo
 ## Requirements
 
 ### Requirement: Check out an available copy
-The service SHALL check out a copy identified by copy ID to a member identified by member ID, create an active loan recording both IDs and checkout and due timestamps, and mark the copy on loan. A ready hold's reserved copy SHALL be eligible only for its holding member, and successful checkout SHALL consume that hold. It SHALL reject unknown members, unknown copies, unavailable copies other than the member's reservation, and copies already associated with an active loan, without changing loans or copy status beyond expiration processing.
+The service SHALL check out a copy identified by copy ID to a member identified by member ID, create an active loan recording both IDs and checkout and due timestamps, and mark the copy on loan. It SHALL reject unknown members, unknown copies, unavailable copies other than the member's reservation, and copies already associated with an active loan, without changing loans or copy status beyond expiration processing.
 
 #### Scenario: Successful checkout
 - **WHEN** an eligible member checks out an available copy with no active loan
@@ -16,6 +16,9 @@ The service SHALL check out a copy identified by copy ID to a member identified 
 #### Scenario: Invalid checkout target
 - **WHEN** checkout specifies an unknown member, unknown copy, unavailable copy not reserved for that member, or a copy already associated with an active loan
 - **THEN** checkout fails without changing loans or copy status beyond expiration processing
+
+### Requirement: Check out a reserved copy
+A ready hold's reserved copy SHALL be eligible only for its holding member, and successful checkout SHALL consume that hold.
 
 #### Scenario: Reserved checkout
 - **WHEN** the holding member checks out their ready copy while eligible
