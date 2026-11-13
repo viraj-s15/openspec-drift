@@ -1,0 +1,28 @@
+name: spec-alignment
+on: pull_request
+
+jobs:
+  spec-alignment:
+    runs-on: ubuntu-latest
+    permissions:
+      checks: write
+      contents: read
+      pull-requests: write
+    env:
+      HAS_KEY: ${{ secrets.OPENAI_API_KEY != '' }}
+    steps:
+      - if: env.HAS_KEY != 'true'
+        run: echo "::notice::OPENAI_API_KEY is not set, so this check was skipped. Run scripts/spec-alignment/run-local.sh <branch> to use pi instead."
+      - if: env.HAS_KEY == 'true'
+        uses: actions/checkout@v4
+        with:
+          # spec-alignment diffs origin/HEAD...HEAD, which a shallow checkout cannot resolve.
+          fetch-depth: 0
+      - if: env.HAS_KEY == 'true'
+        uses: ebellefontaine/spec-alignment@v0.1.1
+        with:
+          provider: openai
+          api_key: ${{ secrets.OPENAI_API_KEY }}
+          # Same model as the pi runs, so CI and local results compare.
+          model: gpt-6.1-terra
+          source_documents: openspec
