@@ -15,7 +15,7 @@ export interface Loan {
 /** Use one shared instance per catalog and route lending through it. Direct catalog
  * status changes do not alter loan ownership, and instances do not coordinate. */
 export class Loans {
-  private readonly active = new Map<string, Loan>();
+  private readonly active = new Map<string, Loan & { renewals: number }>();
   private readonly holds = new Map<string, Hold[]>();
   private readonly holdOrder = new WeakMap<Hold, number>();
   private nextHoldOrder = 0;
@@ -41,7 +41,9 @@ export class Loans {
   }
 
   private balanceAt(memberId: string, time: number): number {
-    const loans = [...this.active.values()].map(loan => ({ ...loan, returnedAt: time })).concat(this.returned);
+    const loans: Array<Loan & { returnedAt: number }> = [
+      ...[...this.active.values()].map(loan => ({ ...loan, returnedAt: time })), ...this.returned,
+    ];
     const accrued = loans.filter(loan => loan.memberId === memberId).reduce((total, loan) =>
       total + Math.min(1000, Math.max(0, Math.floor((loan.returnedAt - loan.dueAt.getTime()) / 86400000)) * 25), 0);
     return Math.max(0, accrued - (this.payments.get(memberId) ?? 0));
@@ -143,12 +145,39 @@ export class Loans {
       throw new Error('Copy unavailable');
     }
 
-    const loan: Loan = { memberId, copyId, checkoutAt: new Date(timestamp), dueAt: new Date(due) };
+    const loan = { memberId, copyId, checkoutAt: new Date(timestamp), dueAt: new Date(due), renewals: 0 };
     this.catalog.setCopyStatus(copyId, 'on loan');
     this.active.set(copyId, loan);
     if (reservation) queue.splice(queue.indexOf(reservation), 1);
     this.lastTime = timestamp;
-    return { ...loan, checkoutAt: new Date(loan.checkoutAt), dueAt: new Date(loan.dueAt) };
+    return { memberId, copyId, checkoutAt: new Date(loan.checkoutAt), dueAt: new Date(loan.dueAt) };
+  }
+
+  renew(memberId: string, copyId: string): Loan {
+    const timestamp = this.readTime();
+    this.reconcile(timestamp);
+    this.checkoutTime = timestamp;
+    let member;
+    try {
+      member = this.members.get(memberId);
+    } finally {
+      this.checkoutTime = undefined;
+    }
+    if (!member) throw new Error('Unknown member');
+    const isbn = this.catalog.getCopyIsbn(copyId);
+    if (isbn === undefined) throw new Error('Unknown copy');
+    const loan = this.active.get(copyId);
+    if (!loan || loan.memberId !== memberId) throw new Error('No active loan for member');
+    if (timestamp > loan.dueAt.getTime()) throw new Error('Loan overdue');
+    if (loan.renewals >= 2) throw new Error('Renewal limit reached');
+    if ((this.holds.get(isbn) ?? []).some(hold => hold.memberId !== memberId)) {
+      throw new Error('Book has another member’s hold');
+    }
+    const due = new Date(timestamp + (member.tier === 'premium' ? 28 : 14) * 86400000);
+    if (!Number.isFinite(due.getTime())) throw new Error('Invalid clock value');
+    loan.dueAt = due;
+    loan.renewals++;
+    return { memberId, copyId, checkoutAt: new Date(loan.checkoutAt), dueAt: new Date(due) };
   }
 
   returnCopy(copyId: string): void {
