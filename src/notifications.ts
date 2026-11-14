@@ -2,7 +2,7 @@ import type { Hold } from './holds.js';
 import type { Loan } from './loans.js';
 
 const MILLISECONDS_PER_DAY = 86_400_000;
-const DUE_SOON_DAY_OFFSET = -2;
+const DUE_SOON_DAY_OFFSET = -3;
 const OVERDUE_DAY_OFFSET = 1;
 
 export type Notification =

@@ -87,10 +87,10 @@ describe('renewals', () => {
     const { loans, catalog, setTime } = setup();
     loans.checkout('standard', 'a'); loans.checkout('premium', 'b');
     loans.placeHold('other', 'isbn'); loans.returnCopy('b');
-    setTime(start + 3 * day - 1);
+    setTime(start + 7 * day - 1);
     expect(() => loans.renew('standard', 'a')).toThrow();
     expect(loans.getHolds('isbn')).toMatchObject([{ memberId: 'other', status: 'ready', copyId: 'b' }]);
-    setTime(start + 3 * day);
+    setTime(start + 7 * day);
     loans.renew('standard', 'a');
     expect(loans.getHolds('isbn')).toEqual([]);
     expect(catalog.getCopy('b')?.status).toBe('available');
@@ -101,10 +101,10 @@ describe('renewals', () => {
     loans.checkout('standard', 'a'); loans.checkout('premium', 'b');
     loans.placeHold('standard', 'isbn'); loans.placeHold('other', 'isbn');
     loans.returnCopy('b');
-    setTime(start + 3 * day);
+    setTime(start + 7 * day);
     expect(() => loans.renew('standard', 'a')).toThrow();
     expect(loans.getHolds('isbn')).toMatchObject([{ memberId: 'other', status: 'ready', copyId: 'b' }]);
-    setTime(start + 6 * day);
+    setTime(start + 14 * day);
     loans.renew('standard', 'a'); loans.renew('standard', 'a');
   });
 

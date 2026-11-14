@@ -70,14 +70,14 @@ describe('fine suspension snapshots', () => {
   it('combines the exact threshold with independent manual holds in lookup and list', () => {
     const members = new Members();
     members.register('1', 'Ada', 'standard');
-    let balance = 500;
+    let balance = 300;
     members.registerFineProvider(() => balance);
     expect(members.get('1')?.suspended).toBe(false);
-    balance = 501;
+    balance = 301;
     expect(members.get('1')?.suspended).toBe(true);
     expect(members.list()[0].suspended).toBe(true);
     members.reinstate('1'); expect(members.get('1')?.suspended).toBe(true);
-    members.suspend('1'); balance = 500;
+    members.suspend('1'); balance = 300;
     expect(members.list()[0].suspended).toBe(true);
     members.reinstate('1'); expect(members.get('1')?.suspended).toBe(false);
     const snapshot = members.list()[0]; snapshot.suspended = true;

@@ -1,7 +1,7 @@
 import { Catalog, type Copy } from './catalog.js';
 import { Members } from './members.js';
 
-const HOLD_PICKUP_PERIOD_MS = 72 * 3_600_000;
+const HOLD_PICKUP_PERIOD_MS = 168 * 3_600_000;
 
 export type Hold =
   | { memberId: string; isbn: string; status: 'waiting' }
