@@ -45,7 +45,7 @@ describe('loan notifications', () => {
     expect(catalog.getCopy('a')?.status).toBe('on loan');
     // A future scan must not advance the service clock.
     setTime('2024-01-02T00:00:00Z');
-    expect(loans.renew('borrower', 'a').dueAt).toEqual(new Date('2024-01-16T00:00:00Z'));
+    expect(loans.renew('borrower', 'a').dueAt).toEqual(new Date('2024-01-29T23:30:00Z'));
   });
 
   it('ignores returned loans and rejects invalid dates without affecting deduplication', () => {
@@ -72,12 +72,19 @@ describe('loan notifications', () => {
     setTime('2024-01-02T23:30:00Z');
     loans.renew('borrower', 'a');
     scan(loans, '2024-01-14T00:00:00Z');
-    scan(loans, '2024-01-14T12:00:00Z');
-    expect(loans.getOutbox()).toHaveLength(3);
+    scan(loans, '2024-01-16T00:00:00Z');
+    expect(loans.getOutbox()).toHaveLength(2);
+    scan(loans, '2024-01-27T00:00:00Z');
+    scan(loans, '2024-01-27T12:00:00Z');
+    scan(loans, '2024-01-30T00:00:00Z');
+    expect(loans.getOutbox().slice(2)).toEqual([
+      { type: 'due-soon', memberId: 'borrower', copyId: 'a', dueAt: new Date('2024-01-29T23:30:00Z') },
+      { type: 'overdue', memberId: 'borrower', copyId: 'a', dueAt: new Date('2024-01-29T23:30:00Z') },
+    ]);
     loans.returnCopy('a');
     loans.checkout('borrower', 'a');
     scan(loans, '2024-01-14T00:00:00Z');
-    expect(loans.getOutbox()).toHaveLength(4);
+    expect(loans.getOutbox()).toHaveLength(5);
   });
 });
 
