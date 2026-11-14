@@ -1,0 +1,20 @@
+{
+  "model": "openai/gpt-6.1-sol:low",
+  "verdict": "fail",
+  "summary": "The PR doubles the overdue fine rate from the required 25 cents to 50 cents per completed day and changes tests to enforce that contradictory behavior. No source-of-truth documents are modified.",
+  "findings": [
+    {
+      "message": "Changing FINE_PER_DAY_CENTS to 50 contradicts openspec/specs/fines/spec.md, which requires 25 cents per completed overdue 24-hour period. This overcharges members before the cap, reaches caps prematurely, and can cause premature fine-related suspension and checkout rejection.",
+      "severity": "failure",
+      "file": "src/fines.ts",
+      "line": 5
+    },
+    {
+      "message": "Updated assertions enforce the unsupported 50-cent daily rate rather than the specified 25-cent rate. The premium boundary test also replaces the required 19/20/21-day expectations of 475/500/500 cents with a 9/10/11-day cap boundary. Related changes in test/holds.test.ts and test/renewals.test.ts likewise encode the contradictory rate.",
+      "severity": "failure",
+      "file": "test/fines.test.ts",
+      "line": 25
+    }
+  ],
+  "specSelfModified": false
+}

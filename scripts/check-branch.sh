@@ -23,6 +23,13 @@ record openspec-validate $?
 (cd "$work" && npx specgov check --base-ref "$base" --head-ref HEAD --format json) > "$out/specgov.json" 2>&1
 record specgov $?
 
+# SpecGov 1.0.0-rc.2 ignores --base-ref and --head-ref, because its CLI and Action always pass an empty
+# changed-file list, which wins over the refs. This second run passes the changed files itself.
+changed_args=()
+while IFS= read -r file; do changed_args+=(--changed-file "$file"); done < <(git -C "$root" diff --name-only "$base...$branch")
+(cd "$work" && npx specgov check "${changed_args[@]}" --format json) > "$out/specgov-files.json" 2>&1
+record specgov-files $?
+
 (cd "$work" && npx openlore init > /dev/null && npx openlore analyze > /dev/null && npx openlore drift --base "$base" --json) > "$out/openlore.json" 2>&1
 record openlore $?
 

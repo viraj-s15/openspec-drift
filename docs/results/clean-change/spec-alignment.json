@@ -1,0 +1,7 @@
+{
+  "model": "openai/gpt-6.1-sol:low",
+  "verdict": "pass",
+  "summary": "The diff implements the specified three-active-hold limit across books, counting waiting and ready holds together. Added tests cover rejection without state changes, independent member limits, allocation, pickup, and expiration at the deadline. No contradictory behavior or out-of-scope drift is evident in the supplied diff. The diff also adds the listed source-of-truth hold-limit spec delta.",
+  "findings": [],
+  "specSelfModified": true
+}

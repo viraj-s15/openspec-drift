@@ -1,0 +1,7 @@
+✓ spec/catalog
+✓ spec/fines
+✓ spec/holds
+✓ spec/loans
+✓ spec/members
+✓ spec/notifications
+Totals: 6 passed, 0 failed (6 items)

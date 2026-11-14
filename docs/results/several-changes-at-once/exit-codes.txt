@@ -1,0 +1,6 @@
+openspec-validate: exit 0
+specgov: exit 0
+specgov-files: exit 0
+openlore: exit 0
+openspec-verify: exit 0
+spec-alignment: exit 0

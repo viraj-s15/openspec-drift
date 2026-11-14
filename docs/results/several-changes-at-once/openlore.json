@@ -1,0 +1,68 @@
+[openlore] heap sized to 36864 MB (75% of a 49152 MB budget); set OPENLORE_NO_AUTO_HEAP=1 to disable.
+{
+  "timestamp": "2026-11-14T02:44:16.400Z",
+  "baseRef": "ca94d8ca35b4c63599e9c54c273b108617553070",
+  "totalChangedFiles": 16,
+  "analyzedFiles": 16,
+  "filesOmitted": 0,
+  "specRelevantFiles": 3,
+  "issues": [
+    {
+      "id": "gap:src/holds.ts:catalog",
+      "kind": "gap",
+      "severity": "info",
+      "message": "File `src/holds.ts` changed (+1/-1 lines) but spec `openspec/specs/catalog/spec.md` was not updated",
+      "filePath": "src/holds.ts",
+      "domain": "catalog",
+      "specPath": "openspec/specs/catalog/spec.md",
+      "changedLines": {
+        "added": 1,
+        "removed": 1
+      },
+      "suggestion": "Review the catalog spec to ensure it still accurately describes the behavior in src/holds.ts"
+    },
+    {
+      "id": "gap:src/members.ts:catalog",
+      "kind": "gap",
+      "severity": "info",
+      "message": "File `src/members.ts` changed (+3/-1 lines) but spec `openspec/specs/catalog/spec.md` was not updated",
+      "filePath": "src/members.ts",
+      "domain": "catalog",
+      "specPath": "openspec/specs/catalog/spec.md",
+      "changedLines": {
+        "added": 3,
+        "removed": 1
+      },
+      "suggestion": "Review the catalog spec to ensure it still accurately describes the behavior in src/members.ts"
+    },
+    {
+      "id": "gap:src/notifications.ts:catalog",
+      "kind": "gap",
+      "severity": "info",
+      "message": "File `src/notifications.ts` changed (+1/-1 lines) but spec `openspec/specs/catalog/spec.md` was not updated",
+      "filePath": "src/notifications.ts",
+      "domain": "catalog",
+      "specPath": "openspec/specs/catalog/spec.md",
+      "changedLines": {
+        "added": 1,
+        "removed": 1
+      },
+      "suggestion": "Review the catalog spec to ensure it still accurately describes the behavior in src/notifications.ts"
+    }
+  ],
+  "summary": {
+    "gaps": 3,
+    "stale": 0,
+    "uncovered": 0,
+    "orphanedSpecs": 0,
+    "adrGaps": 0,
+    "adrOrphaned": 0,
+    "memoryDrifted": 0,
+    "memoryOrphaned": 0,
+    "memoryOutOfScope": 0,
+    "total": 3
+  },
+  "hasDrift": false,
+  "duration": 3,
+  "mode": "static"
+}

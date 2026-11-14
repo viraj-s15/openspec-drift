@@ -1,0 +1,8 @@
+✓ spec/catalog
+✓ spec/fines
+✓ spec/holds
+✓ spec/loans
+✓ change/longer-premium-loans
+✓ spec/members
+✓ spec/notifications
+Totals: 7 passed, 0 failed (7 items)

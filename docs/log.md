@@ -60,3 +60,11 @@ Earlier slip, not logged at the time: while resetting the bad baseline commits, 
 - The scenarios are built by `openai/gpt-6.1-terra` at high effort. OpenSpec verify and local spec-alignment now judge with `openai/gpt-6.1-sol` at low effort, set as `PI_JUDGE_MODEL` in `scripts/lib/pi.sh`. Otherwise the model that planted a defect would also grade it.
 - The spec-alignment workflow in CI also uses `gpt-6.1-sol`. The action has no input for reasoning effort, so CI runs at the provider default, not low.
 - Smoke test with the new judge on a throwaway late-fee branch: verdict `fail`, with the right reason, citing the fines spec's 25 cents per day.
+
+## 2026-11-13: round 1 runs
+
+- Pi built all six scenario branches on the first try. A diff check of each branch confirmed it holds exactly the defect in `docs/scenarios.md`.
+- SpecGov 1.0.0-rc.2 ignores `--base-ref` and `--head-ref`. `analyze.js` passes `explicitFiles: options.changedFiles` to its git helper, which uses the explicit list whenever it is not `undefined`. The CLI defaults it to `[]`, and the Action passes `getMultilineInput(...).filter(Boolean)`, also `[]`. So it sees no changed files and passes every PR. The setup smoke test missed this because it passed `--changed-file` by hand. `check-branch.sh` now runs SpecGov twice: as shipped, and with the changed files passed.
+- `check-branch.sh` was edited while a loop was running it, so the three branches checked before the edit were rerun.
+- OpenLore prints a heap-size line before its JSON, so `scripts/summarize-results.mjs` parses from the first brace.
+- Results and scoring are in `docs/results.md`. The six PRs (#2 to #7) run the CI checks.

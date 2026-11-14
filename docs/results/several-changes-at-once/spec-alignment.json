@@ -1,0 +1,32 @@
+{
+  "model": "openai/gpt-6.1-sol:low",
+  "verdict": "fail",
+  "summary": "The PR implements a seven-day hold window instead of the specified five-day window and lowers the fine-suspension threshold without authorization. The supplied baseline specifications and change deltas also disagree on hold and notification timing.",
+  "findings": [
+    {
+      "message": "The pickup period is set to 168 hours, contradicting the longer-hold-pickup delta's requirement of exactly 120 hours for initial allocation and reassignment. Updated hold, notification, and renewal tests reinforce the incorrect seven-day behavior rather than the required five-day boundary.",
+      "severity": "failure",
+      "file": "src/holds.ts",
+      "line": 4
+    },
+    {
+      "message": "The new 300-cent threshold suspends members with balances from 301 through 500 cents. The members specification requires fine-related suspension only above 500 cents and removal of that suspension when payment reduces the balance to 500 cents or less. Changes to test/members.test.ts and test/fines.test.ts replace required threshold coverage with the contradictory policy.",
+      "severity": "failure",
+      "file": "src/members.ts",
+      "line": 10
+    },
+    {
+      "message": "Source documents disagree: this delta requires 120-hour reservations, while openspec/specs/holds/spec.md requires 72 hours. The delta explicitly proposes replacing that baseline requirement; neither document supports the implemented 168 hours.",
+      "severity": "notice",
+      "file": "openspec/changes/longer-hold-pickup/specs/holds/spec.md",
+      "line": 6
+    },
+    {
+      "message": "Source documents disagree: this delta requires due-soon notices three UTC calendar days before the due date and prohibits notices on the former two-day date, while openspec/specs/notifications/spec.md requires two days, including after renewal. The implementation matches the explicit change delta.",
+      "severity": "notice",
+      "file": "openspec/changes/earlier-due-soon-notice/specs/notifications/spec.md",
+      "line": 6
+    }
+  ],
+  "specSelfModified": true
+}

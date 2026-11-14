@@ -1,0 +1,26 @@
+{
+  "model": "openai/gpt-6.1-sol:low",
+  "verdict": "fail",
+  "summary": "The implementation and tests use a 42-day premium loan period, contradicting the change specification's required 35 days. The supplied baseline and change specifications also disagree on premium duration.",
+  "findings": [
+    {
+      "message": "PREMIUM_LOAN_DAYS is set to 42, but the longer-premium-loans specification requires exactly 35 fixed 24-hour days for both checkout and renewal. This also delays dependent fine accrual and notification eligibility by seven days relative to the required policy.",
+      "severity": "failure",
+      "file": "src/loans.ts",
+      "line": 12
+    },
+    {
+      "message": "Renewal tests enforce 42 days rather than the required 35. The legacy-loan renewal test likewise expects day 70 after renewal at day 28, whereas the change specification requires day 63. Checkout, fines, and notification tests also encode the unsupported 42-day policy, so they validate the mismatch rather than catch it.",
+      "severity": "failure",
+      "file": "test/renewals.test.ts",
+      "line": 22
+    },
+    {
+      "message": "The supplied source documents disagree: openspec/specs/loans/spec.md requires 28-day premium checkout and renewal periods, while this change delta requires 35 days. The delta explicitly describes replacing the previous policy, but the baseline remains unsynchronized. Neither document authorizes 42 days.",
+      "severity": "warning",
+      "file": "openspec/changes/longer-premium-loans/specs/loans/spec.md",
+      "line": 6
+    }
+  ],
+  "specSelfModified": true
+}

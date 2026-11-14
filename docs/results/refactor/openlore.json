@@ -1,0 +1,40 @@
+[openlore] heap sized to 36864 MB (75% of a 49152 MB budget); set OPENLORE_NO_AUTO_HEAP=1 to disable.
+{
+  "timestamp": "2026-11-14T02:44:06.898Z",
+  "baseRef": "ca94d8ca35b4c63599e9c54c273b108617553070",
+  "totalChangedFiles": 1,
+  "analyzedFiles": 1,
+  "filesOmitted": 0,
+  "specRelevantFiles": 1,
+  "issues": [
+    {
+      "id": "gap:src/loans.ts:catalog",
+      "kind": "gap",
+      "severity": "warning",
+      "message": "File `src/loans.ts` changed (+39/-22 lines) but spec `openspec/specs/catalog/spec.md` was not updated",
+      "filePath": "src/loans.ts",
+      "domain": "catalog",
+      "specPath": "openspec/specs/catalog/spec.md",
+      "changedLines": {
+        "added": 39,
+        "removed": 22
+      },
+      "suggestion": "Review the catalog spec to ensure it still accurately describes the behavior in src/loans.ts"
+    }
+  ],
+  "summary": {
+    "gaps": 1,
+    "stale": 0,
+    "uncovered": 0,
+    "orphanedSpecs": 0,
+    "adrGaps": 0,
+    "adrOrphaned": 0,
+    "memoryDrifted": 0,
+    "memoryOrphaned": 0,
+    "memoryOutOfScope": 0,
+    "total": 1
+  },
+  "hasDrift": true,
+  "duration": 1,
+  "mode": "static"
+}

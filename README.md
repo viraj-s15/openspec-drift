@@ -7,7 +7,8 @@ The app is a small in-memory library-lending service in TypeScript. Its `main` b
 - `docs/baseline.md` describes the starting repo.
 - `docs/scenarios.md` lists each scenario and what a good tool should report. It was written before any tool ran.
 - `docs/log.md` records each step as it happened, including what went wrong.
-- `docs/results/<branch>/` holds each tool's raw output.
+- `docs/results.md` scores every tool on every scenario. `docs/results/<branch>/` holds the raw output.
+- `docs/round-2.md` plans a second round on OpenSpec's own repo.
 
 ## Tools under test
 

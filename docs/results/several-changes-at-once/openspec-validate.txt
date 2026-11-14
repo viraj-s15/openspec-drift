@@ -1,0 +1,9 @@
+✓ spec/catalog
+✓ change/earlier-due-soon-notice
+✓ spec/fines
+✓ spec/holds
+✓ spec/loans
+✓ change/longer-hold-pickup
+✓ spec/members
+✓ spec/notifications
+Totals: 8 passed, 0 failed (8 items)

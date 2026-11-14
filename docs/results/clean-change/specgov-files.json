@@ -1,0 +1,763 @@
+{
+  "schemaVersion": "1",
+  "status": "pass",
+  "mode": "advisory",
+  "graph": {
+    "schemaVersion": "1",
+    "repository": {
+      "root": ".",
+      "name": "check-clean-change"
+    },
+    "detectedFrameworks": [
+      {
+        "id": "openspec",
+        "confidence": "high",
+        "roots": [
+          "openspec/changes/limit-holds-per-member/proposal.md",
+          "openspec/config.yaml",
+          "openspec/specs/catalog/spec.md",
+          "openspec/specs/fines/spec.md",
+          "openspec/specs/holds/spec.md",
+          "openspec/specs/loans/spec.md",
+          "openspec/specs/members/spec.md",
+          "openspec/specs/notifications/spec.md"
+        ]
+      }
+    ],
+    "changeSets": [
+      {
+        "id": "openspec:openspec/changes/archive/2026-11-13-add-catalog",
+        "root": "openspec/changes/archive/2026-11-13-add-catalog",
+        "state": "archived",
+        "framework": "openspec",
+        "artifactIds": [
+          "openspec:2536c805b1ed4382",
+          "openspec:3eb49192204ce8e9",
+          "openspec:52b635e5061e3648",
+          "openspec:d9432123b54ac430"
+        ]
+      },
+      {
+        "id": "openspec:openspec/changes/archive/2026-11-13-add-fines",
+        "root": "openspec/changes/archive/2026-11-13-add-fines",
+        "state": "archived",
+        "framework": "openspec",
+        "artifactIds": [
+          "openspec:0fd731d68c749b7d",
+          "openspec:2a1caa7bccc694c3",
+          "openspec:2f004c35e648d72e",
+          "openspec:3619e683b0573f69",
+          "openspec:ca12edcc3e877387",
+          "openspec:fe7c570a166bd160"
+        ]
+      },
+      {
+        "id": "openspec:openspec/changes/archive/2026-11-13-add-holds",
+        "root": "openspec/changes/archive/2026-11-13-add-holds",
+        "state": "archived",
+        "framework": "openspec",
+        "artifactIds": [
+          "openspec:0e8886f3827b0623",
+          "openspec:206aa2cc762b9a48",
+          "openspec:580a97050c74f526",
+          "openspec:9701bca0154deb43",
+          "openspec:a6f8e45231424f8f",
+          "openspec:a96d37117e1d894e"
+        ]
+      },
+      {
+        "id": "openspec:openspec/changes/archive/2026-11-13-add-loans",
+        "root": "openspec/changes/archive/2026-11-13-add-loans",
+        "state": "archived",
+        "framework": "openspec",
+        "artifactIds": [
+          "openspec:526eaa17ba8aa531",
+          "openspec:84129f6b4d8cc231",
+          "openspec:c25dc4562599d2cf",
+          "openspec:ee32393739be06c8"
+        ]
+      },
+      {
+        "id": "openspec:openspec/changes/archive/2026-11-13-add-members",
+        "root": "openspec/changes/archive/2026-11-13-add-members",
+        "state": "archived",
+        "framework": "openspec",
+        "artifactIds": [
+          "openspec:1f7d98f4249cf262",
+          "openspec:5148b6931d1f08f6",
+          "openspec:937560f5f8976c8b",
+          "openspec:b3878f3773514662"
+        ]
+      },
+      {
+        "id": "openspec:openspec/changes/archive/2026-11-13-add-notifications",
+        "root": "openspec/changes/archive/2026-11-13-add-notifications",
+        "state": "archived",
+        "framework": "openspec",
+        "artifactIds": [
+          "openspec:420aaea0f538a24a",
+          "openspec:684e201f75379940",
+          "openspec:9598456f0efad1e2",
+          "openspec:e20d664b987b60da"
+        ]
+      },
+      {
+        "id": "openspec:openspec/changes/archive/2026-11-13-add-renewals",
+        "root": "openspec/changes/archive/2026-11-13-add-renewals",
+        "state": "archived",
+        "framework": "openspec",
+        "artifactIds": [
+          "openspec:3bc7c1699dd2b28e",
+          "openspec:40891863e3789e9d",
+          "openspec:94e96eab540c2440",
+          "openspec:b0b766693165c697"
+        ]
+      },
+      {
+        "id": "openspec:openspec/changes/archive/2026-11-13-premium-fine-cap",
+        "root": "openspec/changes/archive/2026-11-13-premium-fine-cap",
+        "state": "archived",
+        "framework": "openspec",
+        "artifactIds": [
+          "openspec:7b9325bbfb3ca21a",
+          "openspec:8f2b3776fc54ccba",
+          "openspec:c2de0c3d01ae20a9",
+          "openspec:ddcea219c5551ac5"
+        ]
+      },
+      {
+        "id": "openspec:openspec/changes/limit-holds-per-member",
+        "root": "openspec/changes/limit-holds-per-member",
+        "state": "active",
+        "framework": "openspec",
+        "artifactIds": [
+          "openspec:00d100f1b1d730ca",
+          "openspec:5db7c8d5ef97b88a",
+          "openspec:f33f16bc0323bbf9"
+        ]
+      },
+      {
+        "id": "openspec:openspec/specs/catalog",
+        "root": "openspec/specs/catalog",
+        "state": "active",
+        "framework": "openspec",
+        "artifactIds": [
+          "openspec:88c6658badb5de64"
+        ]
+      },
+      {
+        "id": "openspec:openspec/specs/fines",
+        "root": "openspec/specs/fines",
+        "state": "active",
+        "framework": "openspec",
+        "artifactIds": [
+          "openspec:2458d22aab8ab66b"
+        ]
+      },
+      {
+        "id": "openspec:openspec/specs/holds",
+        "root": "openspec/specs/holds",
+        "state": "active",
+        "framework": "openspec",
+        "artifactIds": [
+          "openspec:a0460928ab9a27c2"
+        ]
+      },
+      {
+        "id": "openspec:openspec/specs/loans",
+        "root": "openspec/specs/loans",
+        "state": "active",
+        "framework": "openspec",
+        "artifactIds": [
+          "openspec:394f02f3ca093e48"
+        ]
+      },
+      {
+        "id": "openspec:openspec/specs/members",
+        "root": "openspec/specs/members",
+        "state": "active",
+        "framework": "openspec",
+        "artifactIds": [
+          "openspec:865d8c659f76803f"
+        ]
+      },
+      {
+        "id": "openspec:openspec/specs/notifications",
+        "root": "openspec/specs/notifications",
+        "state": "active",
+        "framework": "openspec",
+        "artifactIds": [
+          "openspec:03e5fd504f8cf20a"
+        ]
+      }
+    ],
+    "artifacts": [
+      {
+        "id": "openspec:00d100f1b1d730ca",
+        "path": "openspec/changes/limit-holds-per-member/tasks.md",
+        "role": "task",
+        "framework": "openspec",
+        "changeSetId": "openspec:openspec/changes/limit-holds-per-member",
+        "state": "active"
+      },
+      {
+        "id": "openspec:03e5fd504f8cf20a",
+        "path": "openspec/specs/notifications/spec.md",
+        "role": "spec",
+        "framework": "openspec",
+        "changeSetId": "openspec:openspec/specs/notifications",
+        "state": "active"
+      },
+      {
+        "id": "openspec:0e8886f3827b0623",
+        "path": "openspec/changes/archive/2026-11-13-add-holds/specs/loans/spec.md",
+        "role": "spec",
+        "framework": "openspec",
+        "changeSetId": "openspec:openspec/changes/archive/2026-11-13-add-holds",
+        "state": "archived"
+      },
+      {
+        "id": "openspec:0fd731d68c749b7d",
+        "path": "openspec/changes/archive/2026-11-13-add-fines/specs/members/spec.md",
+        "role": "spec",
+        "framework": "openspec",
+        "changeSetId": "openspec:openspec/changes/archive/2026-11-13-add-fines",
+        "state": "archived"
+      },
+      {
+        "id": "openspec:1f7d98f4249cf262",
+        "path": "openspec/changes/archive/2026-11-13-add-members/tasks.md",
+        "role": "task",
+        "framework": "openspec",
+        "changeSetId": "openspec:openspec/changes/archive/2026-11-13-add-members",
+        "state": "archived"
+      },
+      {
+        "id": "openspec:206aa2cc762b9a48",
+        "path": "openspec/changes/archive/2026-11-13-add-holds/tasks.md",
+        "role": "task",
+        "framework": "openspec",
+        "changeSetId": "openspec:openspec/changes/archive/2026-11-13-add-holds",
+        "state": "archived"
+      },
+      {
+        "id": "openspec:2458d22aab8ab66b",
+        "path": "openspec/specs/fines/spec.md",
+        "role": "spec",
+        "framework": "openspec",
+        "changeSetId": "openspec:openspec/specs/fines",
+        "state": "active"
+      },
+      {
+        "id": "openspec:2536c805b1ed4382",
+        "path": "openspec/changes/archive/2026-11-13-add-catalog/proposal.md",
+        "role": "intent",
+        "framework": "openspec",
+        "changeSetId": "openspec:openspec/changes/archive/2026-11-13-add-catalog",
+        "state": "archived"
+      },
+      {
+        "id": "openspec:2a1caa7bccc694c3",
+        "path": "openspec/changes/archive/2026-11-13-add-fines/specs/loans/spec.md",
+        "role": "spec",
+        "framework": "openspec",
+        "changeSetId": "openspec:openspec/changes/archive/2026-11-13-add-fines",
+        "state": "archived"
+      },
+      {
+        "id": "openspec:2f004c35e648d72e",
+        "path": "openspec/changes/archive/2026-11-13-add-fines/proposal.md",
+        "role": "intent",
+        "framework": "openspec",
+        "changeSetId": "openspec:openspec/changes/archive/2026-11-13-add-fines",
+        "state": "archived"
+      },
+      {
+        "id": "openspec:3619e683b0573f69",
+        "path": "openspec/changes/archive/2026-11-13-add-fines/design.md",
+        "role": "design",
+        "framework": "openspec",
+        "changeSetId": "openspec:openspec/changes/archive/2026-11-13-add-fines",
+        "state": "archived"
+      },
+      {
+        "id": "openspec:394f02f3ca093e48",
+        "path": "openspec/specs/loans/spec.md",
+        "role": "spec",
+        "framework": "openspec",
+        "changeSetId": "openspec:openspec/specs/loans",
+        "state": "active"
+      },
+      {
+        "id": "openspec:3bc7c1699dd2b28e",
+        "path": "openspec/changes/archive/2026-11-13-add-renewals/proposal.md",
+        "role": "intent",
+        "framework": "openspec",
+        "changeSetId": "openspec:openspec/changes/archive/2026-11-13-add-renewals",
+        "state": "archived"
+      },
+      {
+        "id": "openspec:3eb49192204ce8e9",
+        "path": "openspec/changes/archive/2026-11-13-add-catalog/design.md",
+        "role": "design",
+        "framework": "openspec",
+        "changeSetId": "openspec:openspec/changes/archive/2026-11-13-add-catalog",
+        "state": "archived"
+      },
+      {
+        "id": "openspec:40891863e3789e9d",
+        "path": "openspec/changes/archive/2026-11-13-add-renewals/specs/loans/spec.md",
+        "role": "spec",
+        "framework": "openspec",
+        "changeSetId": "openspec:openspec/changes/archive/2026-11-13-add-renewals",
+        "state": "archived"
+      },
+      {
+        "id": "openspec:420aaea0f538a24a",
+        "path": "openspec/changes/archive/2026-11-13-add-notifications/proposal.md",
+        "role": "intent",
+        "framework": "openspec",
+        "changeSetId": "openspec:openspec/changes/archive/2026-11-13-add-notifications",
+        "state": "archived"
+      },
+      {
+        "id": "openspec:5148b6931d1f08f6",
+        "path": "openspec/changes/archive/2026-11-13-add-members/specs/members/spec.md",
+        "role": "spec",
+        "framework": "openspec",
+        "changeSetId": "openspec:openspec/changes/archive/2026-11-13-add-members",
+        "state": "archived"
+      },
+      {
+        "id": "openspec:526eaa17ba8aa531",
+        "path": "openspec/changes/archive/2026-11-13-add-loans/design.md",
+        "role": "design",
+        "framework": "openspec",
+        "changeSetId": "openspec:openspec/changes/archive/2026-11-13-add-loans",
+        "state": "archived"
+      },
+      {
+        "id": "openspec:52b635e5061e3648",
+        "path": "openspec/changes/archive/2026-11-13-add-catalog/tasks.md",
+        "role": "task",
+        "framework": "openspec",
+        "changeSetId": "openspec:openspec/changes/archive/2026-11-13-add-catalog",
+        "state": "archived"
+      },
+      {
+        "id": "openspec:580a97050c74f526",
+        "path": "openspec/changes/archive/2026-11-13-add-holds/proposal.md",
+        "role": "intent",
+        "framework": "openspec",
+        "changeSetId": "openspec:openspec/changes/archive/2026-11-13-add-holds",
+        "state": "archived"
+      },
+      {
+        "id": "openspec:5db7c8d5ef97b88a",
+        "path": "openspec/changes/limit-holds-per-member/proposal.md",
+        "role": "intent",
+        "framework": "openspec",
+        "changeSetId": "openspec:openspec/changes/limit-holds-per-member",
+        "state": "active"
+      },
+      {
+        "id": "openspec:684e201f75379940",
+        "path": "openspec/changes/archive/2026-11-13-add-notifications/design.md",
+        "role": "design",
+        "framework": "openspec",
+        "changeSetId": "openspec:openspec/changes/archive/2026-11-13-add-notifications",
+        "state": "archived"
+      },
+      {
+        "id": "openspec:7b9325bbfb3ca21a",
+        "path": "openspec/changes/archive/2026-11-13-premium-fine-cap/tasks.md",
+        "role": "task",
+        "framework": "openspec",
+        "changeSetId": "openspec:openspec/changes/archive/2026-11-13-premium-fine-cap",
+        "state": "archived"
+      },
+      {
+        "id": "openspec:84129f6b4d8cc231",
+        "path": "openspec/changes/archive/2026-11-13-add-loans/tasks.md",
+        "role": "task",
+        "framework": "openspec",
+        "changeSetId": "openspec:openspec/changes/archive/2026-11-13-add-loans",
+        "state": "archived"
+      },
+      {
+        "id": "openspec:865d8c659f76803f",
+        "path": "openspec/specs/members/spec.md",
+        "role": "spec",
+        "framework": "openspec",
+        "changeSetId": "openspec:openspec/specs/members",
+        "state": "active"
+      },
+      {
+        "id": "openspec:88c6658badb5de64",
+        "path": "openspec/specs/catalog/spec.md",
+        "role": "spec",
+        "framework": "openspec",
+        "changeSetId": "openspec:openspec/specs/catalog",
+        "state": "active"
+      },
+      {
+        "id": "openspec:8f2b3776fc54ccba",
+        "path": "openspec/changes/archive/2026-11-13-premium-fine-cap/specs/fines/spec.md",
+        "role": "spec",
+        "framework": "openspec",
+        "changeSetId": "openspec:openspec/changes/archive/2026-11-13-premium-fine-cap",
+        "state": "archived"
+      },
+      {
+        "id": "openspec:937560f5f8976c8b",
+        "path": "openspec/changes/archive/2026-11-13-add-members/design.md",
+        "role": "design",
+        "framework": "openspec",
+        "changeSetId": "openspec:openspec/changes/archive/2026-11-13-add-members",
+        "state": "archived"
+      },
+      {
+        "id": "openspec:94e96eab540c2440",
+        "path": "openspec/changes/archive/2026-11-13-add-renewals/design.md",
+        "role": "design",
+        "framework": "openspec",
+        "changeSetId": "openspec:openspec/changes/archive/2026-11-13-add-renewals",
+        "state": "archived"
+      },
+      {
+        "id": "openspec:9598456f0efad1e2",
+        "path": "openspec/changes/archive/2026-11-13-add-notifications/tasks.md",
+        "role": "task",
+        "framework": "openspec",
+        "changeSetId": "openspec:openspec/changes/archive/2026-11-13-add-notifications",
+        "state": "archived"
+      },
+      {
+        "id": "openspec:9701bca0154deb43",
+        "path": "openspec/changes/archive/2026-11-13-add-holds/specs/holds/spec.md",
+        "role": "spec",
+        "framework": "openspec",
+        "changeSetId": "openspec:openspec/changes/archive/2026-11-13-add-holds",
+        "state": "archived"
+      },
+      {
+        "id": "openspec:a0460928ab9a27c2",
+        "path": "openspec/specs/holds/spec.md",
+        "role": "spec",
+        "framework": "openspec",
+        "changeSetId": "openspec:openspec/specs/holds",
+        "state": "active"
+      },
+      {
+        "id": "openspec:a6f8e45231424f8f",
+        "path": "openspec/changes/archive/2026-11-13-add-holds/design.md",
+        "role": "design",
+        "framework": "openspec",
+        "changeSetId": "openspec:openspec/changes/archive/2026-11-13-add-holds",
+        "state": "archived"
+      },
+      {
+        "id": "openspec:a96d37117e1d894e",
+        "path": "openspec/changes/archive/2026-11-13-add-holds/specs/catalog/spec.md",
+        "role": "spec",
+        "framework": "openspec",
+        "changeSetId": "openspec:openspec/changes/archive/2026-11-13-add-holds",
+        "state": "archived"
+      },
+      {
+        "id": "openspec:b0b766693165c697",
+        "path": "openspec/changes/archive/2026-11-13-add-renewals/tasks.md",
+        "role": "task",
+        "framework": "openspec",
+        "changeSetId": "openspec:openspec/changes/archive/2026-11-13-add-renewals",
+        "state": "archived"
+      },
+      {
+        "id": "openspec:b3878f3773514662",
+        "path": "openspec/changes/archive/2026-11-13-add-members/proposal.md",
+        "role": "intent",
+        "framework": "openspec",
+        "changeSetId": "openspec:openspec/changes/archive/2026-11-13-add-members",
+        "state": "archived"
+      },
+      {
+        "id": "openspec:c25dc4562599d2cf",
+        "path": "openspec/changes/archive/2026-11-13-add-loans/proposal.md",
+        "role": "intent",
+        "framework": "openspec",
+        "changeSetId": "openspec:openspec/changes/archive/2026-11-13-add-loans",
+        "state": "archived"
+      },
+      {
+        "id": "openspec:c2de0c3d01ae20a9",
+        "path": "openspec/changes/archive/2026-11-13-premium-fine-cap/design.md",
+        "role": "design",
+        "framework": "openspec",
+        "changeSetId": "openspec:openspec/changes/archive/2026-11-13-premium-fine-cap",
+        "state": "archived"
+      },
+      {
+        "id": "openspec:ca12edcc3e877387",
+        "path": "openspec/changes/archive/2026-11-13-add-fines/tasks.md",
+        "role": "task",
+        "framework": "openspec",
+        "changeSetId": "openspec:openspec/changes/archive/2026-11-13-add-fines",
+        "state": "archived"
+      },
+      {
+        "id": "openspec:d9432123b54ac430",
+        "path": "openspec/changes/archive/2026-11-13-add-catalog/specs/catalog/spec.md",
+        "role": "spec",
+        "framework": "openspec",
+        "changeSetId": "openspec:openspec/changes/archive/2026-11-13-add-catalog",
+        "state": "archived"
+      },
+      {
+        "id": "openspec:ddcea219c5551ac5",
+        "path": "openspec/changes/archive/2026-11-13-premium-fine-cap/proposal.md",
+        "role": "intent",
+        "framework": "openspec",
+        "changeSetId": "openspec:openspec/changes/archive/2026-11-13-premium-fine-cap",
+        "state": "archived"
+      },
+      {
+        "id": "openspec:e20d664b987b60da",
+        "path": "openspec/changes/archive/2026-11-13-add-notifications/specs/notifications/spec.md",
+        "role": "spec",
+        "framework": "openspec",
+        "changeSetId": "openspec:openspec/changes/archive/2026-11-13-add-notifications",
+        "state": "archived"
+      },
+      {
+        "id": "openspec:ee32393739be06c8",
+        "path": "openspec/changes/archive/2026-11-13-add-loans/specs/loans/spec.md",
+        "role": "spec",
+        "framework": "openspec",
+        "changeSetId": "openspec:openspec/changes/archive/2026-11-13-add-loans",
+        "state": "archived"
+      },
+      {
+        "id": "openspec:f33f16bc0323bbf9",
+        "path": "openspec/changes/limit-holds-per-member/specs/holds/spec.md",
+        "role": "spec",
+        "framework": "openspec",
+        "changeSetId": "openspec:openspec/changes/limit-holds-per-member",
+        "state": "active"
+      },
+      {
+        "id": "openspec:fe7c570a166bd160",
+        "path": "openspec/changes/archive/2026-11-13-add-fines/specs/fines/spec.md",
+        "role": "spec",
+        "framework": "openspec",
+        "changeSetId": "openspec:openspec/changes/archive/2026-11-13-add-fines",
+        "state": "archived"
+      }
+    ],
+    "relations": [
+      {
+        "from": "openspec:00d100f1b1d730ca",
+        "to": "openspec:f33f16bc0323bbf9",
+        "type": "derives_from",
+        "source": "detected"
+      },
+      {
+        "from": "openspec:0e8886f3827b0623",
+        "to": "openspec:9701bca0154deb43",
+        "type": "derives_from",
+        "source": "detected"
+      },
+      {
+        "from": "openspec:0fd731d68c749b7d",
+        "to": "openspec:2a1caa7bccc694c3",
+        "type": "derives_from",
+        "source": "detected"
+      },
+      {
+        "from": "openspec:1f7d98f4249cf262",
+        "to": "openspec:937560f5f8976c8b",
+        "type": "derives_from",
+        "source": "detected"
+      },
+      {
+        "from": "openspec:206aa2cc762b9a48",
+        "to": "openspec:a6f8e45231424f8f",
+        "type": "derives_from",
+        "source": "detected"
+      },
+      {
+        "from": "openspec:2a1caa7bccc694c3",
+        "to": "openspec:fe7c570a166bd160",
+        "type": "derives_from",
+        "source": "detected"
+      },
+      {
+        "from": "openspec:3619e683b0573f69",
+        "to": "openspec:0fd731d68c749b7d",
+        "type": "derives_from",
+        "source": "detected"
+      },
+      {
+        "from": "openspec:3eb49192204ce8e9",
+        "to": "openspec:d9432123b54ac430",
+        "type": "derives_from",
+        "source": "detected"
+      },
+      {
+        "from": "openspec:40891863e3789e9d",
+        "to": "openspec:3bc7c1699dd2b28e",
+        "type": "derives_from",
+        "source": "detected"
+      },
+      {
+        "from": "openspec:5148b6931d1f08f6",
+        "to": "openspec:b3878f3773514662",
+        "type": "derives_from",
+        "source": "detected"
+      },
+      {
+        "from": "openspec:526eaa17ba8aa531",
+        "to": "openspec:ee32393739be06c8",
+        "type": "derives_from",
+        "source": "detected"
+      },
+      {
+        "from": "openspec:52b635e5061e3648",
+        "to": "openspec:3eb49192204ce8e9",
+        "type": "derives_from",
+        "source": "detected"
+      },
+      {
+        "from": "openspec:684e201f75379940",
+        "to": "openspec:e20d664b987b60da",
+        "type": "derives_from",
+        "source": "detected"
+      },
+      {
+        "from": "openspec:7b9325bbfb3ca21a",
+        "to": "openspec:c2de0c3d01ae20a9",
+        "type": "derives_from",
+        "source": "detected"
+      },
+      {
+        "from": "openspec:84129f6b4d8cc231",
+        "to": "openspec:526eaa17ba8aa531",
+        "type": "derives_from",
+        "source": "detected"
+      },
+      {
+        "from": "openspec:8f2b3776fc54ccba",
+        "to": "openspec:ddcea219c5551ac5",
+        "type": "derives_from",
+        "source": "detected"
+      },
+      {
+        "from": "openspec:937560f5f8976c8b",
+        "to": "openspec:5148b6931d1f08f6",
+        "type": "derives_from",
+        "source": "detected"
+      },
+      {
+        "from": "openspec:94e96eab540c2440",
+        "to": "openspec:40891863e3789e9d",
+        "type": "derives_from",
+        "source": "detected"
+      },
+      {
+        "from": "openspec:9598456f0efad1e2",
+        "to": "openspec:684e201f75379940",
+        "type": "derives_from",
+        "source": "detected"
+      },
+      {
+        "from": "openspec:9701bca0154deb43",
+        "to": "openspec:a96d37117e1d894e",
+        "type": "derives_from",
+        "source": "detected"
+      },
+      {
+        "from": "openspec:a6f8e45231424f8f",
+        "to": "openspec:0e8886f3827b0623",
+        "type": "derives_from",
+        "source": "detected"
+      },
+      {
+        "from": "openspec:a96d37117e1d894e",
+        "to": "openspec:580a97050c74f526",
+        "type": "derives_from",
+        "source": "detected"
+      },
+      {
+        "from": "openspec:b0b766693165c697",
+        "to": "openspec:94e96eab540c2440",
+        "type": "derives_from",
+        "source": "detected"
+      },
+      {
+        "from": "openspec:c2de0c3d01ae20a9",
+        "to": "openspec:8f2b3776fc54ccba",
+        "type": "derives_from",
+        "source": "detected"
+      },
+      {
+        "from": "openspec:ca12edcc3e877387",
+        "to": "openspec:3619e683b0573f69",
+        "type": "derives_from",
+        "source": "detected"
+      },
+      {
+        "from": "openspec:d9432123b54ac430",
+        "to": "openspec:2536c805b1ed4382",
+        "type": "derives_from",
+        "source": "detected"
+      },
+      {
+        "from": "openspec:e20d664b987b60da",
+        "to": "openspec:420aaea0f538a24a",
+        "type": "derives_from",
+        "source": "detected"
+      },
+      {
+        "from": "openspec:ee32393739be06c8",
+        "to": "openspec:c25dc4562599d2cf",
+        "type": "derives_from",
+        "source": "detected"
+      },
+      {
+        "from": "openspec:f33f16bc0323bbf9",
+        "to": "openspec:5db7c8d5ef97b88a",
+        "type": "derives_from",
+        "source": "detected"
+      },
+      {
+        "from": "openspec:fe7c570a166bd160",
+        "to": "openspec:2f004c35e648d72e",
+        "type": "derives_from",
+        "source": "detected"
+      }
+    ]
+  },
+  "changedFiles": [
+    "openspec/changes/limit-holds-per-member/.openspec.yaml",
+    "openspec/changes/limit-holds-per-member/proposal.md",
+    "openspec/changes/limit-holds-per-member/specs/holds/spec.md",
+    "openspec/changes/limit-holds-per-member/tasks.md",
+    "src/holds.ts",
+    "test/holds.test.ts"
+  ],
+  "findings": [],
+  "summary": {
+    "frameworks": 1,
+    "changeSets": 15,
+    "artifacts": 45,
+    "artifactCounts": {
+      "task": 9,
+      "spec": 19,
+      "intent": 9,
+      "design": 8
+    },
+    "findings": 0,
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0
+  }
+}

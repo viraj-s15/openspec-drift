@@ -1,0 +1,7 @@
+{
+  "model": "openai/gpt-6.1-sol:low",
+  "verdict": "pass",
+  "summary": "The diff is a behavior-preserving refactor of loan typing, due-date calculation, member lookup timing, active-loan limit checks, and detached loan snapshots. It introduces no identifiable contradiction with or addition beyond the supplied specifications.",
+  "findings": [],
+  "specSelfModified": false
+}
