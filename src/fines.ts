@@ -2,7 +2,7 @@ import type { Loan } from './loans.js';
 import { Members, type MemberTier } from './members.js';
 
 const MILLISECONDS_PER_DAY = 86_400_000;
-const FINE_PER_DAY_CENTS = 25;
+const FINE_PER_DAY_CENTS = 50;
 const PREMIUM_FINE_CAP_CENTS = 500;
 const STANDARD_FINE_CAP_CENTS = 1000;
 
