@@ -7,6 +7,8 @@ export interface Member {
   suspended: boolean;
 }
 
+const SUSPENSION_THRESHOLD_CENTS = 300;
+
 export class Members {
   private readonly members = new Map<string, Member>();
   private fineBalance?: (id: string) => number;
@@ -22,7 +24,7 @@ export class Members {
 
   private snapshot(member: Member): Member {
     const balance = this.fineBalance?.(member.id) ?? 0;
-    return { ...member, suspended: member.suspended || balance > 500 };
+    return { ...member, suspended: member.suspended || balance > SUSPENSION_THRESHOLD_CENTS };
   }
 
   register(id: string, name: string, tier: MemberTier): void {

@@ -45,18 +45,18 @@ describe('fine accounting', () => {
     setTime(100); expect(loans.getBalance('p')).toBe(500);
   });
 
-  it('caps premium loans independently and suspends only above 500 cents', () => {
+  it('caps premium loans independently and reinstates at 300 cents', () => {
     const { loans, members, setTime } = setup();
     loans.checkout('p', 'a');
     setTime(10); loans.checkout('p', 'b');
     setTime(48); expect(loans.getBalance('p')).toBe(750);
     expect(members.get('p')?.suspended).toBe(true);
     setTime(58); expect(loans.getBalance('p')).toBe(1000);
-    loans.payFine('p', 500);
-    expect(loans.getBalance('p')).toBe(500);
+    loans.payFine('p', 700);
+    expect(loans.getBalance('p')).toBe(300);
     expect(members.get('p')?.suspended).toBe(false);
-    setTime(100); expect(loans.getBalance('p')).toBe(500);
-    loans.payFine('p', 500);
+    setTime(100); expect(loans.getBalance('p')).toBe(300);
+    loans.payFine('p', 300);
     expect(loans.getBalance('p')).toBe(0);
   });
 
@@ -110,13 +110,20 @@ describe('fine accounting', () => {
   it('updates checkout eligibility as fines accrue and are paid, while allowing returns', () => {
     const { loans, members, catalog, setTime } = setup();
     loans.checkout('m', 'a');
-    setTime(34); expect(members.get('m')?.suspended).toBe(false);
-    setTime(35); expect(members.list()[0].suspended).toBe(true);
+    setTime(26); expect(loans.getBalance('m')).toBe(300);
+    expect(members.get('m')?.suspended).toBe(false);
+    setTime(27); expect(loans.getBalance('m')).toBe(325);
+    expect(members.list()[0].suspended).toBe(true);
     expect(() => loans.checkout('m', 'b')).toThrow();
     expect(catalog.getCopy('b')?.status).toBe('available');
     members.reinstate('m'); expect(members.get('m')?.suspended).toBe(true);
-    members.suspend('m'); loans.payFine('m', 25);
+    loans.payFine('m', 24);
+    expect(loans.getBalance('m')).toBe(301);
     expect(members.get('m')?.suspended).toBe(true);
+    loans.payFine('m', 1);
+    expect(loans.getBalance('m')).toBe(300);
+    expect(members.get('m')?.suspended).toBe(false);
+    members.suspend('m'); expect(members.get('m')?.suspended).toBe(true);
     members.reinstate('m'); expect(members.get('m')?.suspended).toBe(false);
     loans.checkout('m', 'b');
     members.suspend('m'); loans.returnCopy('a');

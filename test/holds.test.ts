@@ -66,7 +66,7 @@ describe('holds', () => {
     expect(loans.getHolds('one')).toMatchObject([{ memberId: 'first', status: 'ready' }]);
   });
 
-  it('expires at 72 hours, reassigns from processing time, and isolates ready snapshots', () => {
+  it('expires at seven days, reassigns at the deadline, and isolates ready snapshots', () => {
     const { catalog, loans, setTime, time } = setup();
     loans.checkout('borrower', 'a'); loans.checkout('borrower', 'b');
     loans.placeHold('first', 'one'); loans.placeHold('second', 'one');
@@ -74,15 +74,29 @@ describe('holds', () => {
     const start = time();
     const hold = loans.getHolds('one')[0];
     if (hold.status !== 'ready') throw new Error('Expected ready');
+    expect(hold.expiresAt).toEqual(new Date(start + 168 * 3600000));
     hold.expiresAt.setTime(0); hold.copyId = 'b';
-    setTime(start + 72 * 3600000 - 1);
-    expect(loans.getHolds('one')[0]).toMatchObject({ memberId: 'first', copyId: 'a' });
     setTime(start + 72 * 3600000);
+    expect(loans.getHolds('one')[0]).toMatchObject({ memberId: 'first', status: 'ready', copyId: 'a' });
+    setTime(start + 168 * 3600000 - 1);
+    expect(loans.getHolds('one')[0]).toMatchObject({ memberId: 'first', status: 'ready', copyId: 'a' });
+    setTime(start + 168 * 3600000);
     expect(catalog.getCopy('a')?.status).toBe('reserved');
-    expect(loans.getHolds('one')).toEqual([{ memberId: 'second', isbn: 'one', status: 'ready', copyId: 'a', expiresAt: new Date(start + 144 * 3600000) }]);
-    setTime(start + 144 * 3600000);
+    expect(loans.getHolds('one')).toEqual([{ memberId: 'second', isbn: 'one', status: 'ready', copyId: 'a', expiresAt: new Date(start + 336 * 3600000) }]);
+    setTime(start + 336 * 3600000);
     expect(loans.getHolds('one')).toEqual([]);
     expect(catalog.getCopy('a')?.status).toBe('available');
+  });
+
+  it('starts a reassigned pickup period when an overdue expiration is processed', () => {
+    const { loans, setTime, time } = setup();
+    loans.checkout('borrower', 'a'); loans.checkout('borrower', 'b');
+    loans.placeHold('first', 'one'); loans.placeHold('second', 'one');
+    loans.returnCopy('a');
+    const start = time();
+    const processingTime = start + 200 * 3600000;
+    setTime(processingTime);
+    expect(loans.getHolds('one')).toEqual([{ memberId: 'second', isbn: 'one', status: 'ready', copyId: 'a', expiresAt: new Date(processingTime + 168 * 3600000) }]);
   });
 
   it('processes simultaneous expirations by original hold order, not return order', () => {
@@ -91,7 +105,7 @@ describe('holds', () => {
     loans.placeHold('first', 'one'); loans.placeHold('second', 'one');
     loans.placeHold('third', 'one');
     loans.returnCopy('b'); loans.returnCopy('a');
-    setTime(time() + 72 * 3600000);
+    setTime(time() + 168 * 3600000);
     expect(() => loans.checkout('missing', 'a')).toThrow();
     expect(loans.getHolds('one')).toMatchObject([{ memberId: 'third', copyId: 'b', status: 'ready' }]);
   });
@@ -105,7 +119,7 @@ describe('holds', () => {
     expect(() => loans.getHolds('one')).toThrow();
     expect(() => loans.returnCopy('b')).toThrow();
     expect(catalog.getCopy('a')?.status).toBe('reserved');
-    setTime(start + 72 * 3600000);
+    setTime(start + 168 * 3600000);
     loans.returnCopy('b');
     expect(catalog.getCopy('a')?.status).toBe('available');
     setTime(start);
@@ -116,8 +130,8 @@ describe('holds', () => {
     loans.returnCopy('a');
     const ready = loans.getHolds('one')[0];
     if (ready.status !== 'ready') throw new Error('Expected ready');
-    expect(ready.expiresAt.getTime()).toBe(start + 144 * 3600000);
-    setTime(start + 144 * 3600000);
+    expect(ready.expiresAt.getTime()).toBe(start + 336 * 3600000);
+    setTime(start + 336 * 3600000);
     expect(() => loans.placeHold('first', 'one')).toThrow();
     expect(catalog.getCopy('a')?.status).toBe('available');
   });
