@@ -9,7 +9,7 @@ export type { Notification } from './notifications.js';
 
 const MILLISECONDS_PER_DAY = 86_400_000;
 const STANDARD_LOAN_DAYS = 14;
-const PREMIUM_LOAN_DAYS = 28;
+const PREMIUM_LOAN_DAYS = 42;
 const MAX_ACTIVE_LOANS = 5;
 const MAX_RENEWALS = 2;
 

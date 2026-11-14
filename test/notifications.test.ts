@@ -9,12 +9,33 @@ function setup() {
   catalog.addBook('book', 'Book', 'Author', ['a', 'b']);
   const members = new Members();
   for (const id of ['borrower', 'first', 'second']) members.register(id, id, 'standard');
+  members.register('premium', 'Premium', 'premium');
   const loans = new Loans(catalog, members, () => now);
   return { catalog, loans, setTime: (date: string) => { now = new Date(date); } };
 }
 const scan = (loans: Loans, date: string) => loans.scanNotifications(new Date(date));
 
 describe('loan notifications', () => {
+  it('schedules premium notices from the 42-day due date, not the former 28-day date', () => {
+    const { loans } = setup();
+    const loan = loans.checkout('premium', 'a');
+    expect(loan.dueAt).toEqual(new Date('2024-02-12T23:30:00Z'));
+    scan(loans, '2024-01-27T00:00:00Z');
+    scan(loans, '2024-01-29T23:30:00Z');
+    scan(loans, '2024-01-30T00:00:00Z');
+    expect(loans.getOutbox()).toEqual([]);
+    scan(loans, '2024-02-10T00:00:00Z');
+    scan(loans, '2024-02-12T23:59:59Z');
+    expect(loans.getOutbox()).toEqual([
+      { type: 'due-soon', memberId: 'premium', copyId: 'a', dueAt: loan.dueAt },
+    ]);
+    scan(loans, '2024-02-13T00:00:00Z');
+    expect(loans.getOutbox()).toEqual([
+      { type: 'due-soon', memberId: 'premium', copyId: 'a', dueAt: loan.dueAt },
+      { type: 'overdue', memberId: 'premium', copyId: 'a', dueAt: loan.dueAt },
+    ]);
+  });
+
   it('uses exact UTC days, preserves order and returns detached messages and dates', () => {
     const { loans } = setup();
     loans.checkout('borrower', 'a'); loans.checkout('first', 'b');

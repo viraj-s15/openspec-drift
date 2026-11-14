@@ -23,7 +23,7 @@ describe('loans', () => {
     expect(loans.checkout('premium', 'a').memberId).toBe('premium');
   });
 
-  it.each([['standard', 14], ['premium', 28]] as const)('uses fixed %s duration', (member, days) => {
+  it.each([['standard', 14], ['premium', 42]] as const)('uses fixed %s duration', (member, days) => {
     const instant = new Date('2024-03-09T12:34:56.123Z');
     const clock = vi.fn(() => instant);
     const { loans } = setup(clock);
@@ -79,7 +79,7 @@ describe('loans', () => {
       vi.setSystemTime(new Date('2024-01-01T00:00:00Z'));
       const { catalog, loans } = setup();
       for (const copy of ['a', 'b', 'c', 'd', 'e']) loans.checkout(memberId, copy);
-      vi.setSystemTime(new Date(memberId === 'standard' ? '2024-01-16T00:00:00Z' : '2024-01-30T00:00:00Z'));
+      vi.setSystemTime(new Date(memberId === 'standard' ? '2024-01-16T00:00:00Z' : '2024-02-13T00:00:00Z'));
       expect(() => loans.checkout(memberId, 'f')).toThrow();
       expect(catalog.getCopy('f')?.status).toBe('available');
       loans.returnCopy('a');

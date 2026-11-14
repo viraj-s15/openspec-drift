@@ -19,7 +19,7 @@ function setup() {
 }
 
 describe('renewals', () => {
-  it.each([['standard', 14], ['premium', 28]] as const)('renews %s from the renewal instant', (member, days) => {
+  it.each([['standard', 14], ['premium', 42]] as const)('renews %s from the renewal instant', (member, days) => {
     const { loans, setTime, clock } = setup();
     loans.checkout(member, 'a');
     setTime(start + day);
@@ -29,6 +29,31 @@ describe('renewals', () => {
     expect(loan.dueAt.getTime()).toBe(start + (days + 1) * day);
     expect(loan.checkoutAt.getTime()).toBe(start);
     expect(loan).not.toHaveProperty('renewals');
+  });
+
+  it('preserves an existing 28-day premium due date until a successful renewal', () => {
+    const { loans, setTime } = setup();
+    loans.checkout('premium', 'a');
+    // Seed a pre-policy loan through the private in-memory store; no import API exists.
+    const active = (loans as unknown as { active: Map<string, { dueAt: Date }> }).active;
+    const existing = active.get('a')!;
+    existing.dueAt = new Date(start + 28 * day);
+    setTime(start + 27 * day);
+    expect(() => loans.renew('standard', 'a')).toThrow();
+    expect(existing.dueAt.getTime()).toBe(start + 28 * day);
+    setTime(start + 28 * day);
+    expect(loans.renew('premium', 'a').dueAt.getTime()).toBe(start + 70 * day);
+    expect(existing.dueAt.getTime()).toBe(start + 70 * day);
+  });
+
+  it('treats a previous 28-day premium loan as overdue after its recorded due date', () => {
+    const { loans, setTime } = setup();
+    loans.checkout('premium', 'a');
+    const active = (loans as unknown as { active: Map<string, { dueAt: Date }> }).active;
+    active.get('a')!.dueAt = new Date(start + 28 * day);
+    setTime(start + 28 * day + 1);
+    expect(() => loans.renew('premium', 'a')).toThrow('Loan overdue');
+    expect(active.get('a')!.dueAt.getTime()).toBe(start + 28 * day);
   });
 
   it('rejects unknown IDs, a different borrower, and absent or returned loans without consuming allowance', () => {
