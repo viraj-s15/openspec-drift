@@ -129,7 +129,7 @@ export class Loans {
     if (timestamp > loan.dueAt.getTime()) throw new Error('Loan overdue');
     if (loan.renewals >= MAX_RENEWALS) throw new Error('Renewal limit reached');
     this.holds.assertRenewalAllowed(memberId, isbn);
-    const due = new Date(timestamp + (member.tier === 'premium' ? PREMIUM_LOAN_DAYS : STANDARD_LOAN_DAYS) * MILLISECONDS_PER_DAY);
+    const due = new Date(loan.dueAt.getTime() + (member.tier === 'premium' ? PREMIUM_LOAN_DAYS : STANDARD_LOAN_DAYS) * MILLISECONDS_PER_DAY);
     if (!Number.isFinite(due.getTime())) throw new Error('Invalid clock value');
     loan.dueAt = due;
     loan.renewals++;

@@ -19,14 +19,14 @@ function setup() {
 }
 
 describe('renewals', () => {
-  it.each([['standard', 14], ['premium', 28]] as const)('renews %s from the renewal instant', (member, days) => {
+  it.each([['standard', 14], ['premium', 28]] as const)('extends %s from the existing due date', (member, days) => {
     const { loans, setTime, clock } = setup();
     loans.checkout(member, 'a');
     setTime(start + day);
     clock.mockClear();
     const loan = loans.renew(member, 'a');
     expect(clock).toHaveBeenCalledTimes(1);
-    expect(loan.dueAt.getTime()).toBe(start + (days + 1) * day);
+    expect(loan.dueAt.getTime()).toBe(start + 2 * days * day);
     expect(loan.checkoutAt.getTime()).toBe(start);
     expect(loan).not.toHaveProperty('renewals');
   });
@@ -60,6 +60,19 @@ describe('renewals', () => {
     expect(() => loans.renew('standard', 'a')).toThrow();
     expect(catalog.getCopy('a')?.status).toBe('on loan');
     setTime(loan.dueAt.getTime() + day);
+    expect(loans.getBalance('standard')).toBe(25);
+  });
+
+  it('accrues fines only after the renewed due instant', () => {
+    const { loans, setTime } = setup();
+    loans.checkout('standard', 'a');
+    setTime(start + day);
+    loans.renew('standard', 'a');
+    setTime(start + 15 * day);
+    expect(loans.getBalance('standard')).toBe(0);
+    setTime(start + 29 * day - 1);
+    expect(loans.getBalance('standard')).toBe(0);
+    setTime(start + 29 * day);
     expect(loans.getBalance('standard')).toBe(25);
   });
 
@@ -118,7 +131,7 @@ describe('renewals', () => {
     members.suspend('standard');
     setTime(start + day);
     const renewed = loans.renew('standard', 'a');
-    expect(renewed).toEqual({ memberId: 'standard', copyId: 'a', checkoutAt: new Date(start), dueAt: new Date(start + 16 * day) });
+    expect(renewed).toEqual({ memberId: 'standard', copyId: 'a', checkoutAt: new Date(start), dueAt: new Date(start + 42 * day) });
   });
 
   it('rejects invalid clock readings without consuming the allowance', () => {
@@ -137,8 +150,13 @@ describe('renewals', () => {
     const max = 8640000000000000;
     setTime(max - 20 * day);
     const loan = loans.checkout('standard', 'a');
-    setTime(max - 10 * day);
-    expect(() => loans.renew('standard', 'a')).toThrow('Invalid clock value');
+    // The renewal instant plus 14 days fits, but the due date plus 14 does not.
+    setTime(max - 19 * day);
+    expect(Number.isFinite(new Date(max - 19 * day + 14 * day).getTime())).toBe(true);
+    expect(Number.isNaN(new Date(loan.dueAt.getTime() + 14 * day).getTime())).toBe(true);
+    for (let attempt = 0; attempt < 3; attempt++) {
+      expect(() => loans.renew('standard', 'a')).toThrow('Invalid clock value');
+    }
     expect(catalog.getCopy('a')?.status).toBe('on loan');
     setTime(loan.dueAt.getTime() + day);
     expect(loans.getBalance('standard')).toBe(25);
@@ -148,9 +166,12 @@ describe('renewals', () => {
     const { loans, setTime } = setup();
     loans.checkout('standard', 'a');
     setTime(start + day);
-    loans.renew('standard', 'a');
+    const first = loans.renew('standard', 'a');
+    expect(first.dueAt.getTime()).toBe(start + 28 * day);
     setTime(start + 2 * day);
     const second = loans.renew('standard', 'a');
+    expect(second.dueAt.getTime()).toBe(start + 42 * day);
+    expect(first.dueAt.getTime()).toBe(start + 28 * day);
     setTime(start + 3 * day);
     expect(() => loans.renew('standard', 'a')).toThrow();
     setTime(second.dueAt.getTime() + day);

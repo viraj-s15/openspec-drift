@@ -4,7 +4,7 @@ import { Members, type MemberTier } from './members.js';
 const MILLISECONDS_PER_DAY = 86_400_000;
 const FINE_PER_DAY_CENTS = 25;
 const PREMIUM_FINE_CAP_CENTS = 500;
-const STANDARD_FINE_CAP_CENTS = 1000;
+const STANDARD_FINE_CAP_CENTS = 800;
 
 export class Fines {
   private readonly active = new Map<Loan, number>();

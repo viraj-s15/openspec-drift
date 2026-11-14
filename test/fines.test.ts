@@ -24,9 +24,22 @@ describe('fine accounting', () => {
     setTime(15, -1); expect(loans.getBalance('m')).toBe(0);
     setTime(15); expect(loans.getBalance('m')).toBe(25);
     setTime(16); expect(loans.getBalance('m')).toBe(50);
-    setTime(55); expect(loans.getBalance('m')).toBe(1000);
-    setTime(100); expect(loans.getBalance('m')).toBe(1000);
+    setTime(45); expect(loans.getBalance('m')).toBe(775);
+    setTime(46); expect(loans.getBalance('m')).toBe(800);
+    setTime(55); expect(loans.getBalance('m')).toBe(800);
+    setTime(100); expect(loans.getBalance('m')).toBe(800);
     expect(() => loans.getBalance('missing')).toThrow();
+  });
+
+  it('caps standard loans independently and freezes returned loans at the cap', () => {
+    const { loans, setTime } = setup();
+    loans.checkout('m', 'a');
+    loans.checkout('m', 'b');
+    setTime(46);
+    loans.returnCopy('a');
+    expect(loans.getBalance('m')).toBe(1600);
+    setTime(100);
+    expect(loans.getBalance('m')).toBe(1600);
   });
 
   it('caps premium fines at 500 cents without exposing the cap on loan snapshots', () => {
