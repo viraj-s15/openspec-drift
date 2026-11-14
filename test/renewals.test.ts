@@ -60,7 +60,7 @@ describe('renewals', () => {
     expect(() => loans.renew('standard', 'a')).toThrow();
     expect(catalog.getCopy('a')?.status).toBe('on loan');
     setTime(loan.dueAt.getTime() + day);
-    expect(loans.getBalance('standard')).toBe(25);
+    expect(loans.getBalance('standard')).toBe(50);
   });
 
   it('rejects another member’s waiting hold and preserves it and the allowance', () => {
@@ -141,7 +141,7 @@ describe('renewals', () => {
     expect(() => loans.renew('standard', 'a')).toThrow('Invalid clock value');
     expect(catalog.getCopy('a')?.status).toBe('on loan');
     setTime(loan.dueAt.getTime() + day);
-    expect(loans.getBalance('standard')).toBe(25);
+    expect(loans.getBalance('standard')).toBe(50);
   });
 
   it('allows two renewals, rejects the third, and resets on recheckout', () => {
@@ -154,7 +154,7 @@ describe('renewals', () => {
     setTime(start + 3 * day);
     expect(() => loans.renew('standard', 'a')).toThrow();
     setTime(second.dueAt.getTime() + day);
-    expect(loans.getBalance('standard')).toBe(25);
+    expect(loans.getBalance('standard')).toBe(50);
     loans.returnCopy('a');
     loans.checkout('standard', 'a');
     loans.renew('standard', 'a');

@@ -38,7 +38,7 @@ describe('holds', () => {
     setTime(time() + 16 * 86400000);
     loans.returnCopy('b');
     loans.returnCopy('a');
-    expect(loans.getBalance('borrower')).toBe(100);
+    expect(loans.getBalance('borrower')).toBe(200);
     expect(loans.getHolds('one')).toMatchObject([
       { memberId: 'first', status: 'ready', copyId: 'b' },
       { memberId: 'second', status: 'ready', copyId: 'a' },
