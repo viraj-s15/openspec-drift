@@ -27,6 +27,10 @@ export class Holds {
     if (queue.some(hold => hold.memberId === memberId)) throw new Error('Duplicate hold');
     if (book.copies.some(copy => copy.status === 'available' && !this.isOnLoan(copy.id) &&
       !queue.some(hold => hold.status === 'ready' && hold.copyId === copy.id))) throw new Error('Copy available');
+    const activeHolds = [...this.queues.values()].reduce(
+      (count, holds) => count + holds.filter(hold => hold.memberId === memberId).length, 0,
+    );
+    if (activeHolds >= 3) throw new Error('Hold limit reached');
     const hold: Hold = { memberId, isbn, status: 'waiting' };
     this.order.set(hold, this.nextOrder++);
     queue.push(hold);
