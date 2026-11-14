@@ -20,15 +20,31 @@ export interface Loan {
   dueAt: Date;
 }
 
+type ActiveLoan = Loan & { renewals: number };
+
+function dueTimestamp(timestamp: number, tier: string | undefined): number {
+  const days = tier === 'premium' ? PREMIUM_LOAN_DAYS : STANDARD_LOAN_DAYS;
+  return timestamp + days * MILLISECONDS_PER_DAY;
+}
+
+function copyLoan(loan: Loan): Loan {
+  return {
+    memberId: loan.memberId,
+    copyId: loan.copyId,
+    checkoutAt: new Date(loan.checkoutAt),
+    dueAt: new Date(loan.dueAt),
+  };
+}
+
 /** Use one shared instance per catalog and route lending through it. Direct catalog
  * status changes do not alter loan ownership, and instances do not coordinate. */
 export class Loans {
-  private readonly active = new Map<string, Loan & { renewals: number }>();
+  private readonly active = new Map<string, ActiveLoan>();
   private readonly fines: Fines;
   private readonly holds: Holds;
   private readonly notifications = new Notifications();
   private lastTime = -Infinity;
-  private checkoutTime?: number;
+  private memberLookupTime?: number;
 
   getOutbox(): Notification[] {
     return this.notifications.getOutbox();
@@ -53,8 +69,8 @@ export class Loans {
     this.fines = new Fines(this.members, () => this.readTime(), time => { this.lastTime = time; });
     this.holds = new Holds(this.catalog, this.members, copyId => this.active.has(copyId),
       hold => this.notifications.holdReady(hold));
-    this.members.registerFineProvider(id => this.checkoutTime === undefined
-      ? this.getBalance(id) : this.fines.balanceAt(id, this.checkoutTime));
+    this.members.registerFineProvider(id => this.memberLookupTime === undefined
+      ? this.getBalance(id) : this.fines.balanceAt(id, this.memberLookupTime));
   }
 
   getBalance(memberId: string): number {
@@ -80,21 +96,28 @@ export class Loans {
     this.lastTime = time;
   }
 
+  private getMemberAt(memberId: string, timestamp: number) {
+    this.memberLookupTime = timestamp;
+    try {
+      return this.members.get(memberId);
+    } finally {
+      this.memberLookupTime = undefined;
+    }
+  }
+
+  private hasReachedLoanLimit(memberId: string): boolean {
+    return [...this.active.values()].filter(loan => loan.memberId === memberId).length >= MAX_ACTIVE_LOANS;
+  }
+
   checkout(memberId: string, copyId: string): Loan {
     const timestamp = this.readTime();
-    this.checkoutTime = timestamp;
-    let member;
-    try {
-      member = this.members.get(memberId);
-    } finally {
-      this.checkoutTime = undefined;
-    }
-    const due = timestamp + (member?.tier === 'premium' ? PREMIUM_LOAN_DAYS : STANDARD_LOAN_DAYS) * MILLISECONDS_PER_DAY;
+    const member = this.getMemberAt(memberId, timestamp);
+    const due = dueTimestamp(timestamp, member?.tier);
     if (member && !Number.isFinite(new Date(due).getTime())) throw new Error('Invalid clock value');
     this.reconcile(timestamp);
     if (!member) throw new Error('Unknown member');
     if (member.suspended) throw new Error('Member suspended');
-    if ([...this.active.values()].filter(loan => loan.memberId === memberId).length >= MAX_ACTIVE_LOANS) {
+    if (this.hasReachedLoanLimit(memberId)) {
       throw new Error('Loan limit reached');
     }
     const copy = this.catalog.getCopy(copyId);
@@ -108,19 +131,13 @@ export class Loans {
     this.fines.recordCheckout(loan, member.tier);
     this.holds.consumeReservation(isbn, copyId);
     this.lastTime = timestamp;
-    return { memberId, copyId, checkoutAt: new Date(loan.checkoutAt), dueAt: new Date(loan.dueAt) };
+    return copyLoan(loan);
   }
 
   renew(memberId: string, copyId: string): Loan {
     const timestamp = this.readTime();
     this.reconcile(timestamp);
-    this.checkoutTime = timestamp;
-    let member;
-    try {
-      member = this.members.get(memberId);
-    } finally {
-      this.checkoutTime = undefined;
-    }
+    const member = this.getMemberAt(memberId, timestamp);
     if (!member) throw new Error('Unknown member');
     const isbn = this.catalog.getCopyIsbn(copyId);
     if (isbn === undefined) throw new Error('Unknown copy');
@@ -129,11 +146,11 @@ export class Loans {
     if (timestamp > loan.dueAt.getTime()) throw new Error('Loan overdue');
     if (loan.renewals >= MAX_RENEWALS) throw new Error('Renewal limit reached');
     this.holds.assertRenewalAllowed(memberId, isbn);
-    const due = new Date(timestamp + (member.tier === 'premium' ? PREMIUM_LOAN_DAYS : STANDARD_LOAN_DAYS) * MILLISECONDS_PER_DAY);
+    const due = new Date(dueTimestamp(timestamp, member.tier));
     if (!Number.isFinite(due.getTime())) throw new Error('Invalid clock value');
     loan.dueAt = due;
     loan.renewals++;
-    return { memberId, copyId, checkoutAt: new Date(loan.checkoutAt), dueAt: new Date(due) };
+    return copyLoan(loan);
   }
 
   returnCopy(copyId: string): void {
