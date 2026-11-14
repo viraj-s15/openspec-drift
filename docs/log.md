@@ -41,3 +41,16 @@ Tagged `baseline` at this commit. Every scenario branch starts here.
 - CI smoke test on a README-only PR (#1, closed): all four workflows ran and passed. spec-alignment skipped with its notice, because no `OPENAI_API_KEY` secret is set. OpenSpec validate and OpenLore take about a minute each, mostly `npm ci`.
 
 Setup is done. No scenario branch has been built yet.
+
+## 2026-11-13: repo cleanup before the scenarios
+
+A cleanup pass covered our own scripts, workflows, config and docs. It left the pi-written code, the specs and the generated files alone. It found 11 issues and fixed all of them in 5 commits.
+
+- The most serious one: `npm test` also ran the 11 test files in the spec-alignment checkout under `.tools/`, which gave 211 tests with 81 failing, not 77 passing. Every pi apply step runs `npm test`, so the scenario builds would have sent pi to fix another project's tests. `vitest.config.ts` now limits Vitest to `test/`.
+- SpecGov and OpenLore compared against local `main`, while spec-alignment compared against `origin/main`. All three now use `origin/main`, so they judge the same diff.
+- The worktree setup was copied across three scripts and left worktrees behind when a step failed. It now lives in `scripts/lib/worktree.sh`, which removes the worktree on exit.
+- The pi binary and model were hard-coded in two files. They now come from `scripts/lib/pi.sh`, and `PI_BIN` and `PI_MODEL` override them.
+- `docs/baseline.md` said changes 4, 6 and 8 modify existing specs. The archives show 4, 5 and 8.
+- All workflows now use `actions/checkout@v5`. The CI smoke test above ran before this change, so v5 is unconfirmed until the first scenario PR.
+
+Earlier slip, not logged at the time: while resetting the bad baseline commits, `git clean` deleted `scripts/build-baseline.sh`, because it was not yet committed. The restarted build failed with "No such file or directory", and the progress filter did not match that line, so about 30 minutes passed before anyone noticed. The script was rewritten and committed before rerunning.
