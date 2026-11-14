@@ -29,19 +29,28 @@ describe('fine accounting', () => {
     expect(() => loans.getBalance('missing')).toThrow();
   });
 
+  it('accrues premium fines only after the 42-day due instant', () => {
+    const { loans, setTime } = setup();
+    loans.checkout('p', 'a');
+    setTime(28); expect(loans.getBalance('p')).toBe(0);
+    setTime(42); expect(loans.getBalance('p')).toBe(0);
+    setTime(43, -1); expect(loans.getBalance('p')).toBe(0);
+    setTime(43); expect(loans.getBalance('p')).toBe(25);
+  });
+
   it('caps premium fines at 500 cents without exposing the cap on loan snapshots', () => {
     const { loans, setTime } = setup();
     const loan = loans.checkout('p', 'a');
     expect(Object.keys(loan).sort()).toEqual(['checkoutAt', 'copyId', 'dueAt', 'memberId']);
-    setTime(47); expect(loans.getBalance('p')).toBe(475);
-    setTime(48); expect(loans.getBalance('p')).toBe(500);
-    setTime(49); expect(loans.getBalance('p')).toBe(500);
+    setTime(61); expect(loans.getBalance('p')).toBe(475);
+    setTime(62); expect(loans.getBalance('p')).toBe(500);
+    setTime(63); expect(loans.getBalance('p')).toBe(500);
   });
 
   it('freezes a returned premium loan at its cap', () => {
     const { loans, setTime } = setup();
     loans.checkout('p', 'a');
-    setTime(49); loans.returnCopy('a');
+    setTime(63); loans.returnCopy('a');
     setTime(100); expect(loans.getBalance('p')).toBe(500);
   });
 
@@ -49,9 +58,9 @@ describe('fine accounting', () => {
     const { loans, members, setTime } = setup();
     loans.checkout('p', 'a');
     setTime(10); loans.checkout('p', 'b');
-    setTime(48); expect(loans.getBalance('p')).toBe(750);
+    setTime(62); expect(loans.getBalance('p')).toBe(750);
     expect(members.get('p')?.suspended).toBe(true);
-    setTime(58); expect(loans.getBalance('p')).toBe(1000);
+    setTime(72); expect(loans.getBalance('p')).toBe(1000);
     loans.payFine('p', 500);
     expect(loans.getBalance('p')).toBe(500);
     expect(members.get('p')?.suspended).toBe(false);
