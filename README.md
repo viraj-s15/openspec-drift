@@ -21,7 +21,7 @@ The app is a small in-memory library-lending service in TypeScript. Its `main` b
 
 ## Running it
 
-Every agent step goes through `scripts/agent.sh`, which runs pi with `openai/gpt-6.1-terra` at high thinking effort. Set `PI_BIN` or `PI_MODEL` to change the pi binary or the model. The defaults are in `scripts/lib/pi.sh`.
+Every agent step goes through `scripts/agent.sh`, which runs pi. Pi builds the baseline and scenarios with `openai/gpt-6.1-terra` at high thinking effort. OpenSpec verify and local spec-alignment judge with `openai/gpt-6.1-sol` at low effort, so no model grades its own work. Set `PI_BIN`, `PI_MODEL` or `PI_JUDGE_MODEL` to change them. The defaults are in `scripts/lib/pi.sh`.
 
 `scripts/build-baseline.sh` built the eight baseline changes on `main`. You don't need to rerun it.
 

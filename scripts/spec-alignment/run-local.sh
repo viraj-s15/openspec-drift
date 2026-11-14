@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Runs spec-alignment on one branch with pi as the model, so no provider API key is needed.
 # Usage: scripts/spec-alignment/run-local.sh <branch> [output-file]
-# Env: PI_BIN and PI_MODEL (defaults in scripts/lib/pi.sh), STRICTNESS (default balanced)
+# Env: PI_BIN and PI_JUDGE_MODEL (defaults in scripts/lib/pi.sh), STRICTNESS (default balanced)
 set -euo pipefail
 branch="$1"
 version=v0.1.1
@@ -10,6 +10,7 @@ tool="$root/.tools/spec-alignment-$version"
 work="$root/.tools/worktrees/$branch"
 out="${2:-$root/docs/results/$branch/spec-alignment.json}"
 source "$root/scripts/lib/pi.sh"
+export PI_MODEL="$PI_JUDGE_MODEL"
 
 if [ ! -d "$tool" ]; then
   git clone -q --depth 1 --branch "$version" https://github.com/ebellefontaine/spec-alignment "$tool"

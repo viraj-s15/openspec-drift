@@ -23,6 +23,6 @@ jobs:
         with:
           provider: openai
           api_key: ${{ secrets.OPENAI_API_KEY }}
-          # Same model as the pi runs, so CI and local results compare.
-          model: gpt-6.1-terra
+          # Same judge model as the local runs. The action has no input for reasoning effort, so CI uses the provider default.
+          model: gpt-6.1-sol
           source_documents: openspec

@@ -54,3 +54,9 @@ A cleanup pass covered our own scripts, workflows, config and docs. It left the 
 - All workflows now use `actions/checkout@v5`. The CI smoke test above ran before this change, so v5 is unconfirmed until the first scenario PR.
 
 Earlier slip, not logged at the time: while resetting the bad baseline commits, `git clean` deleted `scripts/build-baseline.sh`, because it was not yet committed. The restarted build failed with "No such file or directory", and the progress filter did not match that line, so about 30 minutes passed before anyone noticed. The script was rewritten and committed before rerunning.
+
+## 2026-11-13: separate judge model
+
+- The scenarios are built by `openai/gpt-6.1-terra` at high effort. OpenSpec verify and local spec-alignment now judge with `openai/gpt-6.1-sol` at low effort, set as `PI_JUDGE_MODEL` in `scripts/lib/pi.sh`. Otherwise the model that planted a defect would also grade it.
+- The spec-alignment workflow in CI also uses `gpt-6.1-sol`. The action has no input for reasoning effort, so CI runs at the provider default, not low.
+- Smoke test with the new judge on a throwaway late-fee branch: verdict `fail`, with the right reason, citing the fines spec's 25 cents per day.
