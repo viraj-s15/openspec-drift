@@ -26,6 +26,16 @@ The "as shipped" columns for OpenSpec validate and SpecGov score 2 of 6 only bec
 - OpenLore linked every source file to the catalog spec, the wrong domain in five of six cases, and reported almost everything as INFO, which passes. Its only blocking result was a false alarm on the refactor.
 - spec-alignment caught every planted defect with the right file and reason, and passed both clean branches. Its notices that a delta "disagrees" with the main spec are expected, because a delta changes the main spec.
 
+## CI
+
+All four CI checks passed on all six PRs (#2 to #7), so in CI no tool blocked any scenario.
+
+- SpecGov's Action reported "Findings: 0" on the `bypass` PR, the same changed-file bug as the CLI. It runs in advisory mode, so even with findings it would not fail the check.
+- OpenLore found the refactor's `src/loans.ts` change as a WARNING, but the workflow fails only on errors, so it passed. Locally, without `--fail-on`, the same result exited 1.
+- spec-alignment skipped, because the repo has no `OPENAI_API_KEY`.
+- OpenSpec validate passed, as it did locally.
+- All workflows ran on `actions/checkout@v5`, which confirms that change.
+
 ## Caveats
 
 - The repo is small, and every planted defect is a clear numeric contradiction. That suits an LLM judge. Round 2 (`docs/round-2.md`) tests real PRs in a large repo.

@@ -68,3 +68,4 @@ Earlier slip, not logged at the time: while resetting the bad baseline commits, 
 - `check-branch.sh` was edited while a loop was running it, so the three branches checked before the edit were rerun.
 - OpenLore prints a heap-size line before its JSON, so `scripts/summarize-results.mjs` parses from the first brace.
 - Results and scoring are in `docs/results.md`. The six PRs (#2 to #7) run the CI checks.
+- CI on PRs #2 to #7: every check passed on every PR, so CI blocked nothing. The SpecGov Action reported 0 findings on `bypass`, which confirms the changed-file bug outside the CLI. `actions/checkout@v5` works in all four workflows.
